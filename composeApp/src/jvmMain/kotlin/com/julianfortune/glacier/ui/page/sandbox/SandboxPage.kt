@@ -3,44 +3,63 @@ package com.julianfortune.glacier.ui.page.sandbox
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.julianfortune.glacier.ui.common.data.Option
 import com.julianfortune.glacier.ui.common.input.AutocompleteSelectV2
-import com.julianfortune.glacier.ui.common.input.Dynamic
 
 @Composable
 fun SandboxPage() {
 
+    val fruitOptions = listOf(
+        Option(1L, "Apple"),
+        Option(2L, "Banana"),
+        Option(3L, "Cherry"),
+        Option(4L, "Durian"),
+        Option(5L, "Elderberry"),
+        Option(6L, "Fig"),
+        Option(7L, "Grapefruit"),
+        Option(8L, "Huckleberry"),
+        Option(9L, "Indian Mango"),
+        Option(10L, "Jujube"),
+    )
+
+    var selectedFruitOption by remember {
+        mutableStateOf<Option<Long>?>(Option(2L, "Banana"))
+    }
+
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(32.dp),
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        AutocompleteSelectV2<Long>(
-            Dynamic.Loading,
-            options = Dynamic.Loading,
-            onOptionSelected = {
-
+        AutocompleteSelectV2(
+            selectedFruitOption,
+            onValueChange = {
+                println("selectedFruit => $it")
+                selectedFruitOption = it
             },
-            label = { Text("Loading Autocomplete") }
+            fruitOptions,
+            onQueryChange = {
+                // TODO
+            },
+            label = { Text("Fruit") }
         )
 
         AutocompleteSelectV2(
-            Dynamic.Present(Option(1L, "Option 1")),
-            options = Dynamic.Loading,
-            onOptionSelected = {
+            null,
+            onValueChange = {
 
             },
-            label = { Text("Pre-filled Loading Autocomplete") }
-        )
-
-        AutocompleteSelectV2(
-            Dynamic.Present(Option(1L, "Option 1")),
-            options = Dynamic.Present(listOf(Option(1L, "Option 1"), Option(2L, "Option 2"))),
-            onOptionSelected = {
-
+            fruitOptions,
+            onQueryChange = {
+                // TODO
             },
             label = { Text("Pre-filled Autocomplete") }
         )

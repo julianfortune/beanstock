@@ -71,10 +71,14 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.julianfortune.glacier"
+            packageName = "Glacier"
             packageVersion = "0.0.4"
 
             modules("java.sql")
+
+            // TODO ..
+//            vendor = "TODO"
+//            description = "TODO"
         }
 
         // When running the application directly set the environment to 'development'
