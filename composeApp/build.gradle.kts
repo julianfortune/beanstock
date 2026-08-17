@@ -71,8 +71,8 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "Glacier"
-            packageVersion = "0.0.4"
+            packageName = "com.julianfortune.glacier"
+            packageVersion = "1.0.0"
 
             modules("java.sql")
 
