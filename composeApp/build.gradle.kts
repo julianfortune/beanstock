@@ -75,6 +75,10 @@ compose.desktop {
             packageVersion = "1.0.0"
 
             modules("java.sql")
+
+            // TODO ..
+//            vendor = "TODO"
+//            description = "TODO"
         }
 
         // When running the application directly set the environment to 'development'
