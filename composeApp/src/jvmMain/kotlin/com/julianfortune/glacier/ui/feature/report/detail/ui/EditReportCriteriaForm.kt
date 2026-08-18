@@ -143,9 +143,9 @@ fun EditReportCriteriaFormUi(
         Spacer(Modifier.height(0.dp))
 
         val costStatusOptions = listOf(
-            Option<Boolean?>(id = null, title = "Any"),
-            Option<Boolean?>(id = false, title = "Paid"),
-            Option<Boolean?>(id = true, title = "No Cost"),
+            Option<Boolean?>(id = null, label = "Any"),
+            Option<Boolean?>(id = false, label = "Paid"),
+            Option<Boolean?>(id = true, label = "No Cost"),
         )
 
         DropdownSelect(

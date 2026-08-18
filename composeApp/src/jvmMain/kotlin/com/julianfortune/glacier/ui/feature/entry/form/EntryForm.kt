@@ -179,8 +179,8 @@ fun NewEntryFormUi(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                val noCostOption = Option(id = true, title = "No Cost")
-                val paidOption = Option(id = false, title = "Paid")
+                val noCostOption = Option(id = true, label = "No Cost")
+                val paidOption = Option(id = false, label = "Paid")
 
                 DropdownSelect(
                     options = listOf(paidOption, noCostOption),

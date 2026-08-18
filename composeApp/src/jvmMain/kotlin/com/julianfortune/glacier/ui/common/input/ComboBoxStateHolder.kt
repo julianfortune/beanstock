@@ -24,7 +24,7 @@ class ComboBoxStateHolder<ID>(
     initialEnabled: Boolean = true,
     private val onSelectionChange: (Option<ID>?) -> Unit,
     private val onQueryChange: ((String?) -> Unit)? = null,
-    private val onCreateNew: ((String?) -> Unit)? = null,
+    private val onCreateNew: ((String) -> Unit)? = null,
 ) {
     private val textFieldState = TextFieldState(getTitle(initialSelection))
 
@@ -97,7 +97,7 @@ class ComboBoxStateHolder<ID>(
         return when (selection) {
             Dynamic.Loading -> ComboBoxDefaults.Text.LOADING
             is Dynamic.Present -> {
-                selection.value?.title ?: ""
+                selection.value?.label ?: ""
             }
         }
     }

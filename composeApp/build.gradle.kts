@@ -54,6 +54,7 @@ kotlin {
             implementation(libs.junit.jupiter)
             implementation(libs.mockk)
             implementation(project.dependencies.platform(libs.junit.bom))
+            implementation(libs.kotlinx.coroutines.test)
             runtimeOnly(libs.junit.platform.launcher)
         }
     }

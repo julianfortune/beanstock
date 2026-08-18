@@ -47,7 +47,7 @@ fun <ID> ComboBox(
     onValueChange: (Option<ID>?) -> Unit,
     options: Dynamic<List<Option<ID>>>,
     onQueryChange: ((String?) -> Unit)? = null,
-    onCreateNew: ((String?) -> Unit)? = null,
+    onCreateNew: ((String) -> Unit)? = null,
     label: @Composable (() -> Unit)? = null,
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
@@ -101,7 +101,6 @@ fun <ID> ComboBoxUi(
             label = { label?.invoke() },
             enabled = state.enabled,
             lineLimits = TextFieldLineLimits.SingleLine,
-//            placeholder = { Text(state.placeholder) },
             colors = OutlinedTextFieldDefaults.colors(),
             trailingIcon = {
                 when (state.comboBoxIcon) {
@@ -158,6 +157,7 @@ fun <ID> ComboBoxUi(
                 },
         )
 
+        // TODO(#79): Share with DropdownSelect
         ExposedDropdownMenu(
             expanded = state.expanded,
             onDismissRequest = {
@@ -200,7 +200,7 @@ fun <ID> ComboBoxUi(
 
                     DropdownMenuItem(
                         text = {
-                            Text(option.title)
+                            Text(option.label)
                         },
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                         modifier = Modifier

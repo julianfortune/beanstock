@@ -33,7 +33,7 @@ fun <ID> AutocompleteSelect(
     val filteredOptions = remember(query, options) {
         if (query != null) {
             options.filter { option ->
-                option.title.contains(query!!, ignoreCase = true)
+                option.label.contains(query!!, ignoreCase = true)
             }
         } else {
             options

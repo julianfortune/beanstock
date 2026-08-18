@@ -46,6 +46,7 @@ fun <ID> DropdownSelect(
         },
         modifier = modifier
     ) {
+        // TODO: Use a textbox (or find a way to reuse `ComboBox` for the UI ?)
         Surface(
             modifier = Modifier
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = enabled)
@@ -70,13 +71,14 @@ fun <ID> DropdownSelect(
                         )
                     }
                     Text(
-                        text = selectedOption.title,
+                        text = selectedOption.label,
                     )
                 }
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             }
         }
 
+        // TODO(#79): Share with ComboBox
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
@@ -93,7 +95,7 @@ fun <ID> DropdownSelect(
                 } else MaterialTheme.colorScheme.onSurface
 
                 DropdownMenuItem(
-                    text = { Text(option.title) },
+                    text = { Text(option.label) },
                     onClick = {
                         onSelectedChange(option)
                         expanded = false

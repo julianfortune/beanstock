@@ -5,5 +5,5 @@ package com.julianfortune.glacier.ui.common.data
  */
 data class Option<out ID>(
     val id: ID,
-    val title: String,
+    val label: String,
 )
