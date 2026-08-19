@@ -1,0 +1,183 @@
+CREATE TABLE IF NOT EXISTS DeliveryEntry (
+    id INTEGER PRIMARY KEY,
+
+    deliveryId INTEGER NOT NULL,
+    itemId INTEGER NOT NULL,
+
+    -- Quantity of goods
+    unitCount INTEGER NOT NULL,
+    itemWeightCentigrams INTEGER, -- Optional value for the weight of a single item
+    itemsPerUnit INTEGER, -- Optional value for 'pack' size
+    unitWeightCentigrams INTEGER NOT NULL,
+
+    -- Cost
+    costStatus TEXT CHECK( costStatus IN ('PURCHASED', 'NO_COST') ) NOT NULL,
+    unitCostCents INTEGER NOT NULL,
+
+    -- Associations
+    programId INTEGER,
+    purchasingAccountId INTEGER,
+
+    -- Metadata
+    createdAtEpochSeconds INTEGER NOT NULL,
+    updatedAtEpochSeconds INTEGER NOT NULL,
+
+    FOREIGN KEY(deliveryId) REFERENCES Delivery(id) ON DELETE CASCADE,
+    FOREIGN KEY(itemId) REFERENCES Item(id),
+    FOREIGN KEY(programId) REFERENCES Program(id),
+    FOREIGN KEY(purchasingAccountId) REFERENCES PurchasingAccount(id)
+);
+
+-- QUERIES
+getById:
+SELECT *
+FROM DeliveryEntry
+WHERE id = :id
+LIMIT 1;
+
+getByDeliveryId:
+SELECT
+    DeliveryEntry.*,
+    Item.name AS itemName,
+    Program.name AS programName,
+    PurchasingAccount.name AS purchasingAccountName
+FROM DeliveryEntry
+    LEFT JOIN Item ON DeliveryEntry.itemId = Item.id
+    LEFT JOIN Program ON DeliveryEntry.programId = Program.id
+    LEFT JOIN PurchasingAccount ON DeliveryEntry.purchasingAccountId = PurchasingAccount.id
+WHERE DeliveryEntry.deliveryId = :deliveryId
+ORDER BY createdAtEpochSeconds ASC;
+
+-- Gets report results for a BasicReport
+getStatisticsByBasicReportCriteria:
+WITH MatchingDeliveryEntries AS (
+    SELECT
+        Delivery.id AS deliveryId,
+        Delivery.feesCents,
+        Delivery.taxesCents,
+        DeliveryEntry.id AS entryId,
+        (DeliveryEntry.unitCostCents * DeliveryEntry.unitCount) AS entryCostCents,
+        (DeliveryEntry.unitWeightCentigrams * DeliveryEntry.unitCount) AS entryWeightCentigrams,
+        -- Flag the FIRST entry row per delivery (to avoid double-counting delivery fees)
+        ROW_NUMBER() OVER (PARTITION BY Delivery.id ORDER BY DeliveryEntry.id) AS deliveryRowSeq
+    FROM DeliveryEntry
+        JOIN Delivery ON DeliveryEntry.deliveryId = Delivery.id
+        LEFT JOIN ItemCategory ic ON DeliveryEntry.itemId = ic.itemId
+    WHERE (Delivery.receivedDate BETWEEN :startDate AND :endDate)
+        AND (:itemId IS NULL OR DeliveryEntry.itemId = :itemId)
+        AND (:itemCategoryId IS NULL OR ic.categoryId = :itemCategoryId)
+        AND (:costStatus IS NULL OR DeliveryEntry.costStatus = :costStatus)
+        AND (:programId IS NULL OR DeliveryEntry.programId = :programId)
+        AND (:purchasingAccountId IS NULL OR DeliveryEntry.purchasingAccountId = :purchasingAccountId)
+        AND (:supplierId IS NULL OR Delivery.supplierId = :supplierId)
+)
+SELECT
+    -- Entry Level Aggregations
+    COUNT(entryId) AS entryCount,
+    SUM(entryCostCents) AS totalCostCents,
+    SUM(entryWeightCentigrams) AS totalWeightCentigrams,
+
+    -- Delivery Level Aggregations
+    COUNT(DISTINCT deliveryId) AS deliveryCount,
+    -- Only include fees/taxes on the first row of each delivery:
+    SUM(CASE WHEN deliveryRowSeq = 1 THEN feesCents ELSE 0 END) AS totalDeliveryFeesCents,
+    SUM(CASE WHEN deliveryRowSeq = 1 THEN taxesCents ELSE 0 END) AS totalDeliveryTaxesCents
+FROM MatchingDeliveryEntries;
+
+-- Gets all matching rows for a BasicReport
+getAllByBasicReportCriteriaPaginated:
+WITH MatchingDeliveryEntries AS (
+    SELECT
+        DeliveryEntry.*,
+        Delivery.receivedDate AS deliveryReceivedDate,
+        Delivery.supplierId AS deliverySupplierId,
+        Delivery.feesCents AS deliveryFeesCents,
+        Delivery.taxesCents AS deliveryTaxesCents,
+        Delivery.createdAtEpochSeconds AS deliveryCreatedAtEpochSeconds,
+        Delivery.updatedAtEpochSeconds AS deliveryUpdatedAtEpochSeconds,
+        Supplier.name AS supplierName,
+        Item.name AS itemName,
+        Program.name AS programName,
+        PurchasingAccount.name AS purchasingAccountName
+    FROM DeliveryEntry
+        JOIN Delivery ON DeliveryEntry.deliveryId = Delivery.id
+        LEFT JOIN ItemCategory ic ON DeliveryEntry.itemId = ic.itemId
+        LEFT JOIN Item ON DeliveryEntry.itemId = Item.id
+        LEFT JOIN Program ON DeliveryEntry.programId = Program.id
+        LEFT JOIN PurchasingAccount ON DeliveryEntry.purchasingAccountId = PurchasingAccount.id
+        LEFT JOIN Supplier ON Delivery.supplierId = Supplier.id
+    WHERE (Delivery.receivedDate BETWEEN :startDate AND :endDate)
+        AND (:itemId IS NULL OR DeliveryEntry.itemId = :itemId)
+        AND (:itemCategoryId IS NULL OR ic.categoryId = :itemCategoryId)
+        AND (:costStatus IS NULL OR DeliveryEntry.costStatus = :costStatus)
+        AND (:programId IS NULL OR DeliveryEntry.programId = :programId)
+        AND (:purchasingAccountId IS NULL OR DeliveryEntry.purchasingAccountId = :purchasingAccountId)
+        AND (:supplierId IS NULL OR Delivery.supplierId = :supplierId)
+)
+SELECT * FROM MatchingDeliveryEntries entries
+ORDER BY entries.deliveryReceivedDate ASC, entries.id ASC -- Ensures pages are stable
+LIMIT :limit
+OFFSET :offset
+;
+
+deleteById:
+DELETE FROM DeliveryEntry WHERE id = :id;
+
+insert:
+INSERT INTO DeliveryEntry (
+    deliveryId,
+    itemId,
+    unitCount,
+    itemsPerUnit,
+    itemWeightCentigrams,
+    unitWeightCentigrams,
+    costStatus,
+    unitCostCents,
+    programId,
+    purchasingAccountId,
+    createdAtEpochSeconds,
+    updatedAtEpochSeconds
+) VALUES (
+    :deliveryId,
+    :itemId,
+    :unitCount,
+    :itemsPerUnit,
+    :itemWeightCentigrams,
+    :unitWeightCentigrams,
+    :costStatus,
+    :unitCostCents,
+    :programId,
+    :purchasingAccountId,
+    :createdAtEpochSeconds,
+    :updatedAtEpochSeconds
+)
+RETURNING id;
+
+updateById:
+UPDATE DeliveryEntry
+SET
+    itemId = :itemId,
+    unitCount = :unitCount,
+    itemsPerUnit = :itemsPerUnit,
+    itemWeightCentigrams = :itemWeightCentigrams,
+    unitWeightCentigrams = :unitWeightCentigrams,
+    costStatus = :costStatus,
+    unitCostCents = :unitCostCents,
+    programId = :programId,
+    purchasingAccountId = :purchasingAccountId,
+    updatedAtEpochSeconds = :updatedAtEpochSeconds
+WHERE id = :id;
+
+updateProgramById:
+UPDATE DeliveryEntry
+SET
+    programId = :programId,
+    updatedAtEpochSeconds = :updatedAtEpochSeconds
+WHERE id = :id;
+
+updatePurchasingAccountById:
+UPDATE DeliveryEntry
+SET
+    purchasingAccountId = :purchasingAccountId,
+    updatedAtEpochSeconds = :updatedAtEpochSeconds
+WHERE id = :id;

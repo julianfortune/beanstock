@@ -1,4 +1,4 @@
-# Glacier (working name)
+# Beanstock: Inventory Management for Food Banks (desktop) 
 
 A desktop application for tracking inventory (primarily food) and generating reports.
 

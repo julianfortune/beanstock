@@ -68,18 +68,14 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEa
 
 compose.desktop {
     application {
-        mainClass = "com.julianfortune.glacier.MainKt"
+        mainClass = "com.julianfortune.beanstock.MainKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.julianfortune.glacier"
+            packageName = "Beanstock"
             packageVersion = "1.0.0"
 
             modules("java.sql")
-
-            // TODO ..
-//            vendor = "TODO"
-//            description = "TODO"
         }
 
         // When running the application directly set the environment to 'development'
@@ -94,7 +90,7 @@ sqldelight {
     databases {
         create("Database") {
             dialect(libs.sqldelight.sqlite.dialect)
-            packageName = "com.julianfortune.glacier.db"
+            packageName = "com.julianfortune.beanstock.db"
             generateAsync = true
         }
     }

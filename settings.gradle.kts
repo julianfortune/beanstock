@@ -1,4 +1,4 @@
-rootProject.name = "GlacierApp"
+rootProject.name = "Beanstock"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
