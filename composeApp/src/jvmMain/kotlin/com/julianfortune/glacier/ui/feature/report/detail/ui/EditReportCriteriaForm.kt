@@ -140,8 +140,6 @@ fun EditReportCriteriaFormUi(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(Modifier.height(0.dp))
-
         val costStatusOptions = listOf(
             Option<Boolean?>(id = null, label = "Any"),
             Option<Boolean?>(id = false, label = "Paid"),
@@ -155,6 +153,7 @@ fun EditReportCriteriaFormUi(
             onSelectedChange = { isNoCost ->
                 onCostStatusChange(isNoCost.id)
             },
+            modifier = Modifier.fillMaxWidth()
         )
 
         AutocompleteSelect(

@@ -183,12 +183,13 @@ fun NewEntryFormUi(
                 val paidOption = Option(id = false, label = "Paid")
 
                 DropdownSelect(
-                    options = listOf(paidOption, noCostOption),
                     selectedId = state.costStatusIsNoCost,
+                    label = "Status",
+                    options = listOf(paidOption, noCostOption),
                     onSelectedChange = { selection ->
                         eventHandler(EntryFormEvent.CostStatusChanged(selection.id))
                     },
-                    modifier = Modifier.weight(0.3f).padding(0.dp, 8.dp, 0.dp, 0.dp)
+                    modifier = Modifier.weight(0.3f)
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))

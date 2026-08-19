@@ -1,10 +1,11 @@
 package com.julianfortune.glacier.ui.common.input
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
@@ -20,7 +21,6 @@ fun <ID> DropdownSelect(
     options: List<Option<ID>>,
     onSelectedChange: (Option<ID>) -> Unit,
     label: String? = null,
-    // TODO: Make the enabled=false state look visually disabled
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
@@ -44,38 +44,31 @@ fun <ID> DropdownSelect(
                 expanded = !expanded
             }
         },
-        modifier = modifier
+        modifier = modifier.pointerHoverIcon(
+            PointerIcon.Hand,
+            overrideDescendants = true, // Prevents text cursor pointer in textfield
+        )
     ) {
-        // TODO: Use a textbox (or find a way to reuse `ComboBox` for the UI ?)
-        Surface(
-            modifier = Modifier
-                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = enabled)
-                .pointerHoverIcon(if (enabled) PointerIcon.Hand else PointerIcon.Default),
-            shape = MaterialTheme.shapes.extraSmall,
-            color = MaterialTheme.colorScheme.surfaceVariant,
+
+        Box(
+            modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
         ) {
-            Row(
-                modifier = Modifier
-                    .height(56.dp)
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f)
-                ) {
-                    label?.let {
-                        Text(
-                            it,
-                            style = MaterialTheme.typography.labelSmall
-                        )
-                    }
-                    Text(
-                        text = selectedOption.label,
-                    )
-                }
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            }
+            OutlinedTextField(
+                value = selectedOption.label,
+                onValueChange = {},
+                readOnly = true,
+                label = label?.let { { Text(label) } },
+                enabled = enabled,
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(),
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                modifier = modifier.height(64.dp)
+            )
+
+            // Transparent overlay to prevent the user able to interact with text box at all
+            Box(
+                modifier = Modifier.matchParentSize()
+            )
         }
 
         // TODO(#79): Share with ComboBox

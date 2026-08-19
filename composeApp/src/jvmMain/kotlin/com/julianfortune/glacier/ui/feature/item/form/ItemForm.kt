@@ -108,23 +108,17 @@ fun ItemFormUi(
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                "Packaging",
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.padding(start = 8.dp)
-            )
-
             DropdownSelect(
                 state.format is ItemFormatState.Loose,
-                listOf(
+                label = "Packaging",
+                options = listOf(
                     Option(true, "Loose"),
                     Option(false, "Packaged")
                 ),
                 onSelectedChange = {
                     onIsLoosePackagingChange(it.id)
                 },
+                modifier = Modifier.fillMaxWidth()
             )
         }
 
