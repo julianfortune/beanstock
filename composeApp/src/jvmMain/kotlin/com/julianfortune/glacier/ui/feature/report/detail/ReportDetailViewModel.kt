@@ -91,6 +91,8 @@ class ReportDetailViewModel(
                                 results.entryCount,
                                 results.totalWeight.toPounds().toString(),
                                 "$${formatCents(results.totalCostCents)}",
+                                "$${formatCents(results.totalDeliveryTaxesCents)}",
+                                "$${formatCents(results.totalDeliveryFeesCents)}",
                             )
                         },
                         editCriteria = edit,

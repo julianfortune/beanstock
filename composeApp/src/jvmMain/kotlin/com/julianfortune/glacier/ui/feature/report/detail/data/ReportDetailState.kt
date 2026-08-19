@@ -34,5 +34,7 @@ data class ReportResultState(
     val deliveryCount: Int,
     val entryCount: Int,
     val totalWeight: String,
-    val totalCost: String,
+    val subtotal: String,
+    val totalTaxes: String,
+    val totalFees: String,
 )

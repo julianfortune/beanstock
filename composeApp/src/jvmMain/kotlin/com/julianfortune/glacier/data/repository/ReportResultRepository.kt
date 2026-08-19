@@ -40,6 +40,8 @@ class ReportResultRepository(private val database: Database) {
             result?.let {
                 ReportResult(
                     result.deliveryCount.toInt(),
+                    result.totalDeliveryFeesCents?.toLong() ?: 0,
+                    result.totalDeliveryTaxesCents?.toLong() ?: 0,
                     result.entryCount.toInt(),
                     Weight.ofCentigrams(result.totalWeightCentigrams ?: 0),
                     result.totalCostCents ?: 0,

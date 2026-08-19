@@ -2,8 +2,14 @@ package com.julianfortune.glacier.ui.feature.report.detail.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocalShipping
 import androidx.compose.material.icons.filled.Money
 import androidx.compose.material.icons.filled.Scale
+import androidx.compose.material.icons.outlined.CreditCard
+import androidx.compose.material.icons.outlined.Gavel
+import androidx.compose.material.icons.outlined.LocalShipping
+import androidx.compose.material.icons.outlined.Money
+import androidx.compose.material.icons.outlined.Summarize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,11 +47,33 @@ fun ReportResultSection(
                 FontFamily.Monospace
             )
             KeyValueItem(
-                Icons.Default.Money,
-                "Total Cost",
-                state.totalCost,
+                Icons.Outlined.Summarize,
+                "Subtotal",
+                state.subtotal,
+                FontFamily.Monospace,
+                hint = "The total cost of all products—excluding taxes and fees associated with delivery",
+            )
+            KeyValueItem(
+                Icons.Default.LocalShipping,
+                "Deliveries",
+                "${state.deliveryCount}",
                 FontFamily.Monospace
             )
+            KeyValueItem(
+                Icons.Outlined.Gavel,
+                "Taxes",
+                state.totalTaxes,
+                FontFamily.Monospace,
+                hint = "The taxes accrued across all deliveries (${state.deliveryCount})"
+            )
+            KeyValueItem(
+                Icons.Outlined.CreditCard,
+                "Fees",
+                state.totalFees,
+                FontFamily.Monospace,
+                hint = "The fees accrued across all deliveries (${state.deliveryCount})"
+            )
+
         }
     }
 }
@@ -58,7 +86,9 @@ fun ReportResultSectionPreview() = AppPreview {
             2,
             8,
             "80.0",
-            "$120.00"
+            "$120.00",
+            "$0.00",
+            "$0.00"
         )
     )
 }

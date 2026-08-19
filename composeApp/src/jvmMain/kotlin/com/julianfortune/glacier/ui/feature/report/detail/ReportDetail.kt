@@ -204,7 +204,9 @@ fun ReportDetailUiPreview() = AppPreview {
                 2,
                 8,
                 "80.0",
-                "$120.00"
+                "$120.00",
+                "$0.00",
+                "$0.00"
             ),
         )
     )

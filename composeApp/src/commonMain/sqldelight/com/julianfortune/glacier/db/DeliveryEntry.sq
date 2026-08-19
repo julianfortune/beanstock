@@ -50,24 +50,39 @@ ORDER BY createdAtEpochSeconds ASC;
 
 -- Gets report results for a BasicReport
 getStatisticsByBasicReportCriteria:
+WITH MatchingDeliveryEntries AS (
+    SELECT
+        Delivery.id AS deliveryId,
+        Delivery.feesCents,
+        Delivery.taxesCents,
+        DeliveryEntry.id AS entryId,
+        (DeliveryEntry.unitCostCents * DeliveryEntry.unitCount) AS entryCostCents,
+        (DeliveryEntry.unitWeightCentigrams * DeliveryEntry.unitCount) AS entryWeightCentigrams,
+        -- Flag the FIRST entry row per delivery (to avoid double-counting delivery fees)
+        ROW_NUMBER() OVER (PARTITION BY Delivery.id ORDER BY DeliveryEntry.id) AS deliveryRowSeq
+    FROM DeliveryEntry
+        JOIN Delivery ON DeliveryEntry.deliveryId = Delivery.id
+        LEFT JOIN ItemCategory ic ON DeliveryEntry.itemId = ic.itemId
+    WHERE (Delivery.receivedDate BETWEEN :startDate AND :endDate)
+        AND (:itemId IS NULL OR DeliveryEntry.itemId = :itemId)
+        AND (:itemCategoryId IS NULL OR ic.categoryId = :itemCategoryId)
+        AND (:costStatus IS NULL OR DeliveryEntry.costStatus = :costStatus)
+        AND (:programId IS NULL OR DeliveryEntry.programId = :programId)
+        AND (:purchasingAccountId IS NULL OR DeliveryEntry.purchasingAccountId = :purchasingAccountId)
+        AND (:supplierId IS NULL OR Delivery.supplierId = :supplierId)
+)
 SELECT
-    COUNT(DISTINCT Delivery.id) AS deliveryCount, -- Count of deliviries included
-    COUNT(DeliveryEntry.id) AS entryCount, -- Count of delivery entry rows included
-    SUM(DeliveryEntry.unitCostCents * DeliveryEntry.unitCount) AS totalCostCents, -- Total cost
-    -- TODO: Confirm this won't overflow
-    SUM(DeliveryEntry.unitWeightCentigrams * DeliveryEntry.unitCount) AS totalWeightCentigrams -- Total weight
-FROM DeliveryEntry
-    LEFT JOIN Delivery ON DeliveryEntry.deliveryId = Delivery.id
-    LEFT JOIN ItemCategory ON DeliveryEntry.itemId = ItemCategory.itemId
-WHERE (Delivery.receivedDate BETWEEN :startDate AND :endDate) -- Inclusive range
-    AND (:itemId IS NULL OR DeliveryEntry.itemId = :itemId)
-    AND (:itemCategoryId IS NULL OR ItemCategory.categoryId = :itemCategoryId)
-    AND (:costStatus IS NULL OR DeliveryEntry.costStatus = :costStatus)
-    AND (:programId IS NULL OR DeliveryEntry.programId = :programId)
-    AND (:purchasingAccountId IS NULL OR DeliveryEntry.purchasingAccountId = :purchasingAccountId)
-    AND (:supplierId IS NULL OR Delivery.supplierId = :supplierId)
-LIMIT 1
-;
+    -- Entry Level Aggregations
+    COUNT(entryId) AS entryCount,
+    SUM(entryCostCents) AS totalCostCents,
+    SUM(entryWeightCentigrams) AS totalWeightCentigrams,
+
+    -- Delivery Level Aggregations
+    COUNT(DISTINCT deliveryId) AS deliveryCount,
+    -- Only include fees/taxes on the first row of each delivery:
+    SUM(CASE WHEN deliveryRowSeq = 1 THEN feesCents ELSE 0 END) AS totalDeliveryFeesCents,
+    SUM(CASE WHEN deliveryRowSeq = 1 THEN taxesCents ELSE 0 END) AS totalDeliveryTaxesCents
+FROM MatchingDeliveryEntries;
 
 -- Gets all matching rows for a BasicReport
 getAllByBasicReportCriteriaPaginated:

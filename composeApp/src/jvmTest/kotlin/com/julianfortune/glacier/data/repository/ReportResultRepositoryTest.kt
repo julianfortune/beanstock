@@ -44,12 +44,17 @@ class ReportResultRepositoryTest {
         return id
     }
 
-    private suspend fun insertDelivery(receivedDate: String, supplierId: Long): Long {
+    private suspend fun insertDelivery(
+        receivedDate: String,
+        supplierId: Long,
+        taxesCents: Long? = null,
+        feesCents: Long? = null,
+    ): Long {
         return database.deliveryQueries.insert(
             receivedDate,
             supplierId,
-            null,
-            null,
+            taxesCents,
+            feesCents,
             Instant.now().epochSecond,
             Instant.now().epochSecond,
         ).awaitAsOne()
@@ -137,11 +142,11 @@ class ReportResultRepositoryTest {
     )
 
     private suspend fun insertDeliveries() = mapOf(
-        "2025-01-01" to insertDelivery("2025-01-01", supplierIds["ABC Foods"]!!),
-        "2025-02-08" to insertDelivery("2025-02-08", supplierIds["Harvest Produce"]!!),
+        "2025-01-01" to insertDelivery("2025-01-01", supplierIds["ABC Foods"]!!, 150, 500),
+        "2025-02-08" to insertDelivery("2025-02-08", supplierIds["Harvest Produce"]!!, 30, 80),
         "2025-03-01" to insertDelivery("2025-03-01", supplierIds["ABC Foods"]!!),
-        "2025-04-07" to insertDelivery("2025-04-07", supplierIds["Harvest Produce"]!!),
-        "2025-05-01" to insertDelivery("2025-05-01", supplierIds["ABC Foods"]!!),
+        "2025-04-07" to insertDelivery("2025-04-07", supplierIds["Harvest Produce"]!!, 1000, null),
+        "2025-05-01" to insertDelivery("2025-05-01", supplierIds["ABC Foods"]!!, null, 5),
         "2025-06-06" to insertDelivery("2025-06-06", supplierIds["Harvest Produce"]!!),
         "2025-07-01" to insertDelivery("2025-07-01", supplierIds["ABC Foods"]!!),
         "2025-08-08" to insertDelivery("2025-08-08", supplierIds["Harvest Produce"]!!),
@@ -218,19 +223,23 @@ class ReportResultRepositoryTest {
         val expectedEntryCount = 13
         val expectedTotalWeightKg = 2580
         val expectedTotalCostDollars = 915
+        val expectedTaxesCents = 1180L
+        val expectedFeesCents = 585L
 
         assertThat(result!!).isNotNull
         assertThat(result.entryCount).isEqualTo(expectedEntryCount)
         assertThat(result.totalWeight.centigrams).isEqualTo(expectedTotalWeightKg * KG)
         assertThat(result.totalCostCents).isEqualTo(expectedTotalCostDollars * DOLLARS)
+        assertThat(result.totalDeliveryTaxesCents).isEqualTo(expectedTaxesCents)
+        assertThat(result.totalDeliveryFeesCents).isEqualTo(expectedFeesCents)
     }
 
     @ParameterizedTest
     @CsvSource(
         value = [
-            "2025-01-01, 2025-01-01, 3, 1160, 475", // One day
-            "2025-01-01, 2025-01-31, 3, 1160, 475", // Month
-            "2025-11-02, 2026-01-01, 1,   60,  90", // Bounds checking
+            "2025-01-01, 2025-01-01, 3, 1160, 475, 150, 500", // One day
+            "2025-01-01, 2025-01-31, 3, 1160, 475, 150, 500", // Month
+            "2025-11-02, 2026-01-01, 1,   60,  90, 0, 0", // Bounds checking
         ]
     )
     fun forDateRange(
@@ -238,7 +247,9 @@ class ReportResultRepositoryTest {
         endString: String,
         expectedEntryCount: Int,
         expectedTotalWeightKg: Long,
-        expectedTotalCostDollars: Long
+        expectedTotalCostDollars: Long,
+        expectedTaxesCents: Long,
+        expectedFeesCents: Long,
     ) {
         // GIVEN
         val startDate = LocalDateCodec.deserialize(startString).unwrapUnsafe()
@@ -257,21 +268,25 @@ class ReportResultRepositoryTest {
         assertThat(result.entryCount).isEqualTo(expectedEntryCount)
         assertThat(result.totalWeight.centigrams).isEqualTo(expectedTotalWeightKg * KG)
         assertThat(result.totalCostCents).isEqualTo(expectedTotalCostDollars * DOLLARS)
+        assertThat(result.totalDeliveryTaxesCents).isEqualTo(expectedTaxesCents)
+        assertThat(result.totalDeliveryFeesCents).isEqualTo(expectedFeesCents)
     }
 
     @ParameterizedTest
     @CsvSource(
         value = [
-            "Flour,  1, 1000, 400",
-            "Potato, 1,  600,   0",
-            "Milk,   1,  200,  80",
+            "Flour,  1, 1000, 400,  150, 500",
+            "Potato, 1,  600,   0,   30,  80",
+            "Milk,   1,  200,  80, 1000,   0",
         ]
     )
     fun forItemId(
         itemName: String,
         expectedEntryCount: Int,
         expectedTotalWeightKg: Long,
-        expectedTotalCostDollars: Long
+        expectedTotalCostDollars: Long,
+        expectedTaxesCents: Long,
+        expectedFeesCents: Long,
     ) {
         // GIVEN
         val itemId = itemIds[itemName]!!
@@ -290,23 +305,27 @@ class ReportResultRepositoryTest {
         assertThat(result.entryCount).isEqualTo(expectedEntryCount)
         assertThat(result.totalWeight.centigrams).isEqualTo(expectedTotalWeightKg * KG)
         assertThat(result.totalCostCents).isEqualTo(expectedTotalCostDollars * DOLLARS)
+        assertThat(result.totalDeliveryTaxesCents).isEqualTo(expectedTaxesCents)
+        assertThat(result.totalDeliveryFeesCents).isEqualTo(expectedFeesCents)
     }
 
     @ParameterizedTest
     @CsvSource(
         value = [
-            "Bulk,    1, 1000,  400",
-            "Canned,  1,   40,   20",
-            "Dairy,   3,  410,  175",
-            "Frozen,  3,   90,  140",
-            "Produce, 5, 1040,  180",
+            "Bulk,    1, 1000,  400,  150, 500",
+            "Canned,  1,   40,   20,    0,   5",
+            "Dairy,   3,  410,  175, 1150, 500",
+            "Frozen,  3,   90,  140,    0,   0",
+            "Produce, 5, 1040,  180, 1180, 580",
         ]
     )
     fun forCategoryId(
         categoryName: String,
         expectedEntryCount: Int,
         expectedTotalWeightKg: Long,
-        expectedTotalCostDollars: Long
+        expectedTotalCostDollars: Long,
+        expectedTaxesCents: Long,
+        expectedFeesCents: Long,
     ) {
         // GIVEN
         val categoryId = categoryIds[categoryName]!!
@@ -325,20 +344,24 @@ class ReportResultRepositoryTest {
         assertThat(result.entryCount).isEqualTo(expectedEntryCount)
         assertThat(result.totalWeight.centigrams).isEqualTo(expectedTotalWeightKg * KG)
         assertThat(result.totalCostCents).isEqualTo(expectedTotalCostDollars * DOLLARS)
+        assertThat(result.totalDeliveryTaxesCents).isEqualTo(expectedTaxesCents)
+        assertThat(result.totalDeliveryFeesCents).isEqualTo(expectedFeesCents)
     }
 
     @ParameterizedTest
     @CsvSource(
         value = [
-            "PURCHASED, 10, 1850, 915",
-            "NO_COST,    3,  730,   0",
+            "PURCHASED, 10, 1850, 915, 1150, 505",
+            "NO_COST,    3,  730,   0, 1030,  80",
         ]
     )
     fun forCostStatus(
         costStatus: CostStatus,
         expectedEntryCount: Int,
         expectedTotalWeightKg: Long,
-        expectedTotalCostDollars: Long
+        expectedTotalCostDollars: Long,
+        expectedTaxesCents: Long,
+        expectedFeesCents: Long,
     ) {
         // WHEN
         val result = runBlocking {
@@ -354,20 +377,24 @@ class ReportResultRepositoryTest {
         assertThat(result.entryCount).isEqualTo(expectedEntryCount)
         assertThat(result.totalWeight.centigrams).isEqualTo(expectedTotalWeightKg * KG)
         assertThat(result.totalCostCents).isEqualTo(expectedTotalCostDollars * DOLLARS)
+        assertThat(result.totalDeliveryTaxesCents).isEqualTo(expectedTaxesCents)
+        assertThat(result.totalDeliveryFeesCents).isEqualTo(expectedFeesCents)
     }
 
     @ParameterizedTest
     @CsvSource(
         value = [
-            "Program A, 6,  440,  340",
-            "Program B, 5, 1130,  160",
+            "Program A, 6,  440,  340,  150, 505",
+            "Program B, 5, 1130,  160, 1030,  80",
         ]
     )
     fun forProgramId(
         programName: String,
         expectedEntryCount: Int,
         expectedTotalWeightKg: Long,
-        expectedTotalCostDollars: Long
+        expectedTotalCostDollars: Long,
+        expectedTaxesCents: Long,
+        expectedFeesCents: Long,
     ) {
         // GIVEN
         val programId = programIds[programName]!!
@@ -386,20 +413,24 @@ class ReportResultRepositoryTest {
         assertThat(result.entryCount).isEqualTo(expectedEntryCount)
         assertThat(result.totalWeight.centigrams).isEqualTo(expectedTotalWeightKg * KG)
         assertThat(result.totalCostCents).isEqualTo(expectedTotalCostDollars * DOLLARS)
+        assertThat(result.totalDeliveryTaxesCents).isEqualTo(expectedTaxesCents)
+        assertThat(result.totalDeliveryFeesCents).isEqualTo(expectedFeesCents)
     }
 
     @ParameterizedTest
     @CsvSource(
         value = [
-            "Account I,  4,  340,  230",
-            "Account II, 6, 1510,  685",
+            "Account I,  4,  340,  230,  150, 500",
+            "Account II, 6, 1510,  685, 1150, 505",
         ]
     )
     fun forPurchasingAccountId(
         accountName: String,
         expectedEntryCount: Int,
         expectedTotalWeightKg: Long,
-        expectedTotalCostDollars: Long
+        expectedTotalCostDollars: Long,
+        expectedTaxesCents: Long,
+        expectedFeesCents: Long,
     ) {
         // GIVEN
         val accountId = accountIds[accountName]!!
@@ -418,20 +449,24 @@ class ReportResultRepositoryTest {
         assertThat(result.entryCount).isEqualTo(expectedEntryCount)
         assertThat(result.totalWeight.centigrams).isEqualTo(expectedTotalWeightKg * KG)
         assertThat(result.totalCostCents).isEqualTo(expectedTotalCostDollars * DOLLARS)
+        assertThat(result.totalDeliveryTaxesCents).isEqualTo(expectedTaxesCents)
+        assertThat(result.totalDeliveryFeesCents).isEqualTo(expectedFeesCents)
     }
 
     @ParameterizedTest
     @CsvSource(
         value = [
-            "ABC Foods,       6, 1230,  545",
-            "Harvest Produce, 7, 1350,  370",
+            "ABC Foods,       6, 1230,  545,  150, 505",
+            "Harvest Produce, 7, 1350,  370, 1030,  80",
         ]
     )
     fun forSupplierId(
         supplierName: String,
         expectedEntryCount: Int,
         expectedTotalWeightKg: Long,
-        expectedTotalCostDollars: Long
+        expectedTotalCostDollars: Long,
+        expectedTaxesCents: Long,
+        expectedFeesCents: Long,
     ) {
         // GIVEN
         val supplierId = supplierIds[supplierName]!!
@@ -450,12 +485,14 @@ class ReportResultRepositoryTest {
         assertThat(result.entryCount).isEqualTo(expectedEntryCount)
         assertThat(result.totalWeight.centigrams).isEqualTo(expectedTotalWeightKg * KG)
         assertThat(result.totalCostCents).isEqualTo(expectedTotalCostDollars * DOLLARS)
+        assertThat(result.totalDeliveryTaxesCents).isEqualTo(expectedTaxesCents)
+        assertThat(result.totalDeliveryFeesCents).isEqualTo(expectedFeesCents)
     }
 
     @ParameterizedTest
     @CsvSource(
         value = [
-            "Apple, Produce, Harvest Produce, Program A, Account I, PURCHASED, 1, 160, 120"
+            "Apple, Produce, Harvest Produce, Program A, Account I, PURCHASED, 1, 160, 120, 0, 0"
         ]
     )
     fun withAllCriteria(
@@ -467,7 +504,9 @@ class ReportResultRepositoryTest {
         costStatus: CostStatus,
         expectedEntryCount: Int,
         expectedTotalWeightKg: Long,
-        expectedTotalCostDollars: Long
+        expectedTotalCostDollars: Long,
+        expectedTaxesCents: Long,
+        expectedFeesCents: Long,
     ) {
         // GIVEN
         val itemId = itemIds[itemName]!!
@@ -495,5 +534,7 @@ class ReportResultRepositoryTest {
         assertThat(result.entryCount).isEqualTo(expectedEntryCount)
         assertThat(result.totalWeight.centigrams).isEqualTo(expectedTotalWeightKg * KG)
         assertThat(result.totalCostCents).isEqualTo(expectedTotalCostDollars * DOLLARS)
+        assertThat(result.totalDeliveryTaxesCents).isEqualTo(expectedTaxesCents)
+        assertThat(result.totalDeliveryFeesCents).isEqualTo(expectedFeesCents)
     }
 }
