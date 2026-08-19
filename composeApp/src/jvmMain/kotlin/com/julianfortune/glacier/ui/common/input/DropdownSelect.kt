@@ -1,8 +1,10 @@
 package com.julianfortune.glacier.ui.common.input
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -45,13 +47,16 @@ fun <ID> DropdownSelect(
             }
         },
         modifier = modifier.pointerHoverIcon(
-            PointerIcon.Hand,
-            overrideDescendants = true, // Prevents text cursor pointer in textfield
+            when {
+                enabled -> PointerIcon.Hand
+                else -> PointerIcon.Default
+            }
         )
     ) {
-
         Box(
-            modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
         ) {
             OutlinedTextField(
                 value = selectedOption.label,
@@ -62,12 +67,14 @@ fun <ID> DropdownSelect(
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(),
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                modifier = modifier.height(64.dp)
+                modifier = Modifier.height(64.dp).fillMaxWidth()
             )
 
             // Transparent overlay to prevent the user able to interact with text box at all
             Box(
-                modifier = Modifier.matchParentSize()
+                modifier = Modifier
+                    .matchParentSize()
+                    .clickable(interactionSource = null, indication = null, onClick = {}),
             )
         }
 
