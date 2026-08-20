@@ -10,7 +10,7 @@ import com.julianfortune.beanstock.ui.page.namedentity.data.EntityOperation
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 
-open class NamedEntityPageViewModel<T : NamedEntity>(private val repository: NamedEntityRepository<*, T>) : ViewModel() {
+open class NamedEntityPageViewModel<T : NamedEntity>(private val repository: NamedEntityRepository<T>) : ViewModel() {
 
     private val _operation = mutableStateOf<EntityOperation<T>?>(null)
     val operation: State<EntityOperation<T>?> = _operation
@@ -27,12 +27,12 @@ open class NamedEntityPageViewModel<T : NamedEntity>(private val repository: Nam
     }
 
     suspend fun update(id: Long, name: String) {
-        repository.update(id = id, name = name)
+        repository.updateNameById(id = id, name = name)
     }
 
     suspend fun delete(id: Long) {
         // TODO: Error handling
-        repository.delete(id = id).onFailure {
+        repository.deleteById(id = id).onFailure {
             println(">> Error=$it")
         }
     }

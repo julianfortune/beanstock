@@ -1,5 +1,9 @@
 package com.julianfortune.beanstock
 
+import com.julianfortune.beanstock.data.model.Account
+import com.julianfortune.beanstock.data.model.Category
+import com.julianfortune.beanstock.data.model.Program
+import com.julianfortune.beanstock.data.model.Supplier
 import com.julianfortune.beanstock.data.repository.*
 import com.julianfortune.beanstock.db.Database
 import com.julianfortune.beanstock.ui.coordinator.delivery.DefaultDeliveryViewCoordinator
@@ -21,18 +25,33 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
+object Qualifiers {
+    val categoryRepository = named("categoryRepository")
+    val supplierRepository = named("supplierRepository")
+    val programRepository = named("programRepository")
+    val accountRepository = named("accountRepository")
+}
+
 val appModule = module {
     single { Database(get()) }
 
     // Repositories
-    single { ReportRepository(get()) }
     single { DeliveryRepository(get()) }
-    single { CategoryRepository(get()) }
     single { ItemRepository(get()) }
+    single { ReportRepository(get()) }
     single { ReportResultRepository(get()) }
-    single { SupplierRepository(get()) }
-    single { ProgramRepository(get()) }
-    single { AccountRepository(get()) }
+    single<NamedEntityRepository<Account>>(Qualifiers.accountRepository) {
+        accountRepositoryOf(get())
+    }
+    single<NamedEntityRepository<Category>>(Qualifiers.categoryRepository) {
+        categoryRepositoryOf(get())
+    }
+    single<NamedEntityRepository<Supplier>>(Qualifiers.supplierRepository) {
+        supplierRepositoryOf(get())
+    }
+    single<NamedEntityRepository<Program>>(Qualifiers.programRepository) {
+        programRepositoryOf(get())
+    }
 
     // View coordinators
     single<DeliveryViewCoordinator> {
@@ -51,7 +70,7 @@ val appModule = module {
     // ViewModel delegates
     single<CategoryOptionsProvider> {
         DefaultCategoryOptionsProvider(
-            categoryRepository = get(),
+            categoryRepository = get(Qualifiers.categoryRepository),
             scope = CoroutineScope(Dispatchers.Default)
         )
     }
@@ -63,26 +82,26 @@ val appModule = module {
     }
     single<ProgramOptionsProvider> {
         DefaultProgramOptionsProvider(
-            programRepository = get(),
+            programRepository = get(Qualifiers.programRepository),
             scope = CoroutineScope(Dispatchers.Default)
         )
     }
     single<AccountOptionsProvider> {
         DefaultAccountOptionsProvider(
-            accountRepository = get(),
+            accountRepository = get(Qualifiers.accountRepository),
             scope = CoroutineScope(Dispatchers.Default)
         )
     }
     single<SupplierOptionsProvider> {
         DefaultSupplierOptionsProvider(
-            supplierRepository = get(),
+            supplierRepository = get(Qualifiers.supplierRepository),
             scope = CoroutineScope(Dispatchers.Default)
         )
     }
 
     // ViewModels
     viewModel(named("categoryViewModel")) {
-        NamedEntityPageViewModel(get<CategoryRepository>())
+        NamedEntityPageViewModel<Category>(get(Qualifiers.categoryRepository))
     }
     viewModel {
         EntryTableViewModel(
@@ -118,19 +137,28 @@ val appModule = module {
         ItemsPageViewModel(get(), get())
     }
     viewModel(named("programViewModel")) {
-        NamedEntityPageViewModel(get<ProgramRepository>())
+        NamedEntityPageViewModel<Program>(get(Qualifiers.programRepository))
     }
     viewModel(named("purchasingAccountViewModel")) {
-        NamedEntityPageViewModel(get<AccountRepository>())
+        NamedEntityPageViewModel<Account>(get(Qualifiers.accountRepository))
     }
     viewModel {
-        ReportDetailViewModel(get(), get(), get(), get(), get(), get(), get(), get())
+        ReportDetailViewModel(
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(),
+        )
     }
     viewModel {
         ReportHeadlineListViewModel(get(), get())
     }
     viewModel(named("supplierViewModel")) {
-        NamedEntityPageViewModel(get<SupplierRepository>())
+        NamedEntityPageViewModel<Supplier>(get(Qualifiers.supplierRepository))
     }
 
 }

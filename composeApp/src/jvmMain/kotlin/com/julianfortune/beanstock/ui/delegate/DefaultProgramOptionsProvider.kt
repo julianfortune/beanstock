@@ -1,13 +1,14 @@
 package com.julianfortune.beanstock.ui.delegate
 
-import com.julianfortune.beanstock.data.repository.ProgramRepository
+import com.julianfortune.beanstock.data.model.Program
+import com.julianfortune.beanstock.data.repository.NamedEntityRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class DefaultProgramOptionsProvider(
-    programRepository: ProgramRepository,
+    programRepository: NamedEntityRepository<Program>,
     scope: CoroutineScope
 ) : ProgramOptionsProvider {
 

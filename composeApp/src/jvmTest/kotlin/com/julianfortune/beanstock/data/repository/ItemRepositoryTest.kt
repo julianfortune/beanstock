@@ -97,7 +97,7 @@ class ItemRepositoryTest {
     }
 
     @Test
-    fun update(): Unit = runBlocking {
+    fun updateNameById(): Unit = runBlocking {
         // GIVEN
         val initialCategoryId = database.categoryQueries.insert("Dairy").awaitAsOne()
         val itemId = database.itemQueries.insert("Butter", null).awaitAsOne()

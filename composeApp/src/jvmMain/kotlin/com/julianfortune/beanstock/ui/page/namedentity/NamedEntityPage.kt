@@ -30,7 +30,7 @@ fun <T : NamedEntity> NamedEntityPage(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    val entities by viewModel.allEntities.collectAsState(emptyList())
+    val entities by viewModel.allEntities.collectAsState(emptyList<T>())
     val currentOperation by viewModel.operation
 
     Column {

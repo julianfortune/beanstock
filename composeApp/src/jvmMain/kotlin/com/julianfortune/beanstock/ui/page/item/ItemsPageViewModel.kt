@@ -61,7 +61,7 @@ class ItemsPageViewModel(
 
     fun showEditItem(item: ItemHeadline) {
         viewModelScope.launch {
-            val fullItem = itemRepository.getById(item.id).firstOrNull()
+            val fullItem = itemRepository.getItemById(item.id).firstOrNull()
             fullItem?.let { _itemOperation.value = EntityOperation.Edit(it) }
         }
     }

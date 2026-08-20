@@ -52,7 +52,7 @@ class EntryFormViewModel(
         .flatMapLatest { itemId ->
             when (itemId) {
                 null -> flowOf(null)
-                else -> itemRepository.getById(itemId)
+                else -> itemRepository.getItemById(itemId)
             }
         }.stateIn(
             scope = viewModelScope,

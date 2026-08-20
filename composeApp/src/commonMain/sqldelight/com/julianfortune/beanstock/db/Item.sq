@@ -65,3 +65,8 @@ SET
     name = :name,
     savedWeightInCentigramsListJson = :savedWeightInCentigramsListJson
 WHERE id = :id;
+
+updateNameById:
+UPDATE Item
+SET name = :name
+WHERE id = :id;

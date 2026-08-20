@@ -1,13 +1,14 @@
 package com.julianfortune.beanstock.ui.delegate
 
-import com.julianfortune.beanstock.data.repository.SupplierRepository
+import com.julianfortune.beanstock.data.model.Supplier
+import com.julianfortune.beanstock.data.repository.NamedEntityRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 class DefaultSupplierOptionsProvider(
-    supplierRepository: SupplierRepository,
+    supplierRepository: NamedEntityRepository<Supplier>,
     scope: CoroutineScope
 ) : SupplierOptionsProvider {
 

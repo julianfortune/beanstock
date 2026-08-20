@@ -14,9 +14,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class ItemRepository(private val database: Database) {
+class ItemRepository(private val database: Database) : NamedEntityRepository<ItemHeadline> {
 
-    fun getAll(): Flow<List<ItemHeadline>> {
+    override fun getAll(): Flow<List<ItemHeadline>> {
         return database.itemQueries.getAllItems()
             .asFlow()
             .mapToList(Dispatchers.IO)
@@ -27,7 +27,7 @@ class ItemRepository(private val database: Database) {
             }
     }
 
-    fun getById(id: Long): Flow<Item> {
+    fun getItemById(id: Long): Flow<Item> {
         return database.itemQueries.getItemWithCategoriesById(id)
             .asFlow()
             .mapToList(Dispatchers.IO)
@@ -48,14 +48,24 @@ class ItemRepository(private val database: Database) {
                     format
                 )
             }
-
     }
 
-    fun searchByName(searchString: String): Flow<List<Item>> {
+    override fun getById(id: Long): Flow<ItemHeadline> {
+        return database.itemQueries.getItemWithCategoriesById(id)
+            .asFlow()
+            .mapToList(Dispatchers.IO)
+            .map { rows ->
+                val first = rows.firstOrNull() ?: throw RuntimeException("Unable to find an Item with id=$id")
+
+                ItemHeadline(first.id, first.name)
+            }
+    }
+
+    override fun searchByName(query: String): Flow<List<ItemHeadline>> {
         return database.itemQueries.getAllItemsWithCategoriesByQueryingName(
-            query = "%$searchString%",
-            startsWith = "$searchString%",
-            exactMatch = searchString,
+            query = "%$query%",
+            startsWith = "$query%",
+            exactMatch = query,
             limit = 50,
         )
             .asFlow()
@@ -64,19 +74,15 @@ class ItemRepository(private val database: Database) {
                 rows.groupBy { it.id }
                     .map { (itemId, itemRows) ->
                         val firstRow = itemRows.first()
-                        val categories = rows
-                            .filter { it.categoryId != null } // Since it's a LEFT JOIN there may be no category
-                            .map { Category(it.categoryId!!, it.categoryName!!) }
-                        val savedWeights = firstRow.savedWeightInCentigramsListJson?.let {
-                            WeightListCodec.deserialize(it).unwrapUnsafe().toSet()
-                        }
-                        val format = formatFromSavedWeights(savedWeights)
 
-                        Item(
+                        // val categories = rows
+                        //    .filter { it.categoryId != null } // Since it's a LEFT JOIN there may be no category
+                        //    .map { Category(it.categoryId!!, it.categoryName!!) }
+
+                        ItemHeadline(
                             itemId,
                             firstRow.name,
-                            categories,
-                            format,
+                            // TODO(?): Add categories
                         )
                     }
             }
@@ -88,6 +94,13 @@ class ItemRepository(private val database: Database) {
             else -> Item.Format.Packaged(savedWeights)
         }
     }
+
+    override suspend fun insert(name: String): Result<Long> = insert(
+        name,
+        emptySet(),
+        // NOTE: Defaults to `Loose` packaging
+        Item.Format.Loose,
+    )
 
     suspend fun insert(name: String, categoryIds: Set<Long>, format: Item.Format): Result<Long> {
         return Result.runCatching {
@@ -109,7 +122,7 @@ class ItemRepository(private val database: Database) {
     }
 
     suspend fun update(
-        itemId: Long,
+        id: Long,
         name: String,
         categoryIds: Set<Long>,
         format: Item.Format,
@@ -118,14 +131,24 @@ class ItemRepository(private val database: Database) {
 
         return runCatching {
             database.transactionWithResult {
-                database.itemQueries.updateById(name, savedWeightsJson, itemId)
+                database.itemQueries.updateById(name, savedWeightsJson, id)
 
-                database.itemCategoryQueries.deleteByItemId(itemId)
+                database.itemCategoryQueries.deleteByItemId(id)
                 categoryIds.forEach { categoryId ->
-                    database.itemCategoryQueries.insert(itemId, categoryId)
+                    database.itemCategoryQueries.insert(id, categoryId)
                 }
 
-                itemId
+                id
+            }
+        }
+    }
+
+    override suspend fun updateNameById(id: Long, name: String): Result<Long> {
+        return runCatching {
+            database.transactionWithResult {
+                database.itemQueries.updateNameById(name, id)
+
+                id
             }
         }
     }
@@ -137,7 +160,7 @@ class ItemRepository(private val database: Database) {
         }
     }
 
-    suspend fun deleteById(id: Long): Result<Long> {
+    override suspend fun deleteById(id: Long): Result<Long> {
         return Result.runCatching {
             database.itemQueries.deleteById(id) // `ItemCategories` are deleted automatically by CASCADE-ing
         }.fold(
