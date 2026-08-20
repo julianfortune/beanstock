@@ -6,6 +6,7 @@ import com.julianfortune.beanstock.data.model.Program
 import com.julianfortune.beanstock.data.model.Supplier
 import com.julianfortune.beanstock.data.repository.*
 import com.julianfortune.beanstock.db.Database
+import com.julianfortune.beanstock.domain.ItemAutocompleteUseCase
 import com.julianfortune.beanstock.ui.coordinator.delivery.DefaultDeliveryViewCoordinator
 import com.julianfortune.beanstock.ui.coordinator.delivery.DeliveryViewCoordinator
 import com.julianfortune.beanstock.ui.coordinator.report.DefaultReportViewCoordinator
@@ -64,6 +65,13 @@ val appModule = module {
         DefaultReportViewCoordinator(
             get(),
             CoroutineScope(Dispatchers.Default),
+        )
+    }
+
+    // Use cases
+    single {
+        ItemAutocompleteUseCase(
+            itemRepository = get()
         )
     }
 

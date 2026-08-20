@@ -14,7 +14,7 @@ import kotlin.properties.Delegates
 class CategoryRepositoryTest {
 
     val database = runBlocking { createTestDatabase() }
-    val repository = CategoryRepository(database)
+    val repository = categoryRepositoryOf(database)
 
     @Nested
     inner class GivenACategory {
@@ -60,7 +60,7 @@ class CategoryRepositoryTest {
             @Test
             fun deletingCategoryFails() {
                 // WHEN
-                val result = runBlocking { repository.delete(categoryId) }
+                val result = runBlocking { repository.deleteById(categoryId) }
 
                 // THEN
                 Assertions.assertThat(result.isFailure).isTrue()

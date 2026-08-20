@@ -30,6 +30,8 @@ class AsyncDynamicOptionsStateHolder<ID>(
         .distinctUntilChanged()
 
     private val optionsForQueryFlow = queryFlow
+        // TODO: It would be awesome to 'delay the emission' of Loading instead of throttling typing updates
+        //  so the user would only see the 'Loading' state if the query took longer than 100ms (for some reason)
         .throttleLatest(debounceTimeout)
         .flatMapLatest { query ->
             getOptions(query).map {

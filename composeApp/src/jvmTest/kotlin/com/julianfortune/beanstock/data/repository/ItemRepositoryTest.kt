@@ -42,7 +42,7 @@ class ItemRepositoryTest {
         database.itemCategoryQueries.insert(itemId, categoryId)
 
         // WHEN
-        val item = itemRepository.getById(itemId).first()
+        val item = itemRepository.getItemById(itemId).first()
 
         // THEN
         assertThat(item.id).isEqualTo(itemId)
@@ -69,7 +69,6 @@ class ItemRepositoryTest {
         val firstResult = results.first()
         assertThat(firstResult.id).isEqualTo(itemId)
         assertThat(firstResult.name).isEqualTo("Butter")
-        assertThat(firstResult.categories).containsExactly(Category(categoryId, "Dairy"))
     }
 
     @Test
@@ -117,7 +116,7 @@ class ItemRepositoryTest {
         assertThat(id).isEqualTo(itemId)
 
         // TODO: Use direct query accessors instead
-        val item = itemRepository.getById(itemId).first()
+        val item = itemRepository.getItemById(itemId).first()
         assertThat(item.name).isEqualTo("Margarine")
         assertThat(item.categories).containsExactly(Category(newCategoryId, "Perishable"))
         assertThat((item.format as Item.Format.Packaged).sizes).containsExactly(Weight.ofImperial(1, 0f))

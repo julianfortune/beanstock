@@ -6,11 +6,12 @@ import com.julianfortune.beanstock.data.model.CostStatus
 import com.julianfortune.beanstock.data.model.Item
 import com.julianfortune.beanstock.data.model.Weight
 import com.julianfortune.beanstock.data.repository.ItemRepository
+import com.julianfortune.beanstock.domain.ItemAutocompleteUseCase
+import com.julianfortune.beanstock.ui.common.data.Dynamic
 import com.julianfortune.beanstock.ui.common.data.Option
 import com.julianfortune.beanstock.ui.common.formatWeight
 import com.julianfortune.beanstock.ui.common.input.CurrencyInput
 import com.julianfortune.beanstock.ui.delegate.AccountOptionsProvider
-import com.julianfortune.beanstock.ui.delegate.ItemOptionsProvider
 import com.julianfortune.beanstock.ui.delegate.ProgramOptionsProvider
 import com.julianfortune.beanstock.ui.feature.entry.form.data.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,12 +22,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalCoroutinesApi::class)
 class EntryFormViewModel(
     private val itemRepository: ItemRepository,
-    private val itemOptionsProvider: ItemOptionsProvider,
+    private val itemAutocompleteUseCase: ItemAutocompleteUseCase,
     private val programOptionsProvider: ProgramOptionsProvider,
     private val accountOptionsProvider: AccountOptionsProvider,
 ) : ViewModel(),
     // TODO: Should all be use-cases
-    ItemOptionsProvider by itemOptionsProvider,
     ProgramOptionsProvider by programOptionsProvider,
     AccountOptionsProvider by accountOptionsProvider {
 
@@ -156,19 +156,25 @@ class EntryFormViewModel(
 
     val uiState: StateFlow<EntryFormState> = combine(
         _inputs,
+        _currentItem,
         _weightOptions,
         _isEditing,
         _validData
-    ) { inputs, weightOptions, isEditing, validData ->
+    ) { inputs, loadedItem, weightOptions, isEditing, validData ->
         val unitWeight = when (inputs.weightIndex) {
             null -> UnitWeightState.LooseItems(inputs.unitPoundsInput, inputs.unitOuncesInput)
             else -> UnitWeightState.PackagedItems(inputs.itemCountInput)
+        }
+        val itemOption = when {
+            inputs.selectedItemId == null -> Dynamic.Present(null)
+            loadedItem == null || inputs.selectedItemId != loadedItem.id -> Dynamic.Loading
+            else -> Dynamic.Present(Option(loadedItem.id, loadedItem.name))
         }
 
         EntryFormState(
             title = if (isEditing) "Edit Entry" else "New Entry",
             submissionText = if (isEditing) "Save" else "Create",
-            selectedItemId = inputs.selectedItemId,
+            selectedItem = itemOption,
             itemWeightOptions = weightOptions,
             selectedItemWeightIndex = inputs.weightIndex,
             unitWeight = unitWeight,
@@ -184,6 +190,23 @@ class EntryFormViewModel(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = EntryFormState() // Provide an initial loading/empty state
     )
+
+    fun getItemOptionsForQuery(query: String?): Flow<List<Option<Long>>> {
+        return itemAutocompleteUseCase.getOptions(query)
+    }
+
+    fun onCreateNewItem(name: String) {
+        viewModelScope.launch {
+            val id = itemRepository.insert(name).getOrThrow() // TODO: Error handling
+
+            _inputs.update {
+                it.copy(
+                    selectedItemId = id,
+                    weightIndex = null,
+                )
+            }
+        }
+    }
 
     fun setInitialEntry(entryBody: EntryBody?) {
         _isEditing.value = entryBody != null

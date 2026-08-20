@@ -13,12 +13,16 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.julianfortune.beanstock.ui.common.data.Dynamic
 import com.julianfortune.beanstock.ui.common.data.Option
+import com.julianfortune.beanstock.ui.common.input.AsyncAutocompleteSelect
 import com.julianfortune.beanstock.ui.common.input.AutocompleteSelect
 import com.julianfortune.beanstock.ui.common.input.CurrencyInputTextField
 import com.julianfortune.beanstock.ui.common.input.DropdownSelect
 import com.julianfortune.beanstock.ui.feature.entry.form.data.*
 import com.julianfortune.beanstock.ui.theme.AppPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import org.koin.compose.viewmodel.koinViewModel
 
 
@@ -33,7 +37,6 @@ fun EntryForm(
     val state by viewModel.uiState.collectAsState()
     val validData by viewModel.validData.collectAsState()
 
-    val itemOptions by viewModel.itemOptions.collectAsState(emptyList())
     val programOptions by viewModel.programOptions.collectAsState(emptyList())
     val accountOptions by viewModel.accountOptions.collectAsState(emptyList())
 
@@ -43,7 +46,8 @@ fun EntryForm(
 
     NewEntryFormUi(
         state = state,
-        itemOptions = itemOptions,
+        getItemOptions = viewModel::getItemOptionsForQuery,
+        onCreateNewItem = viewModel::onCreateNewItem,
         programOptions = programOptions,
         accountOptions = accountOptions,
         eventHandler = { event ->
@@ -69,7 +73,8 @@ fun EntryForm(
 @Composable
 fun NewEntryFormUi(
     state: EntryFormState,
-    itemOptions: List<Option<Long>> = emptyList(),
+    getItemOptions: (query: String?) -> Flow<List<Option<Long>>> = { emptyFlow() },
+    onCreateNewItem: (name: String) -> Unit = {},
     programOptions: List<Option<Long>> = emptyList(),
     accountOptions: List<Option<Long>> = emptyList(),
     eventHandler: (EntryFormEvent) -> Unit = {},
@@ -87,12 +92,13 @@ fun NewEntryFormUi(
         )
 
         Column {
-            AutocompleteSelect(
-                selectedOptionId = state.selectedItemId,
-                options = itemOptions,
-                onSelectedChange = {
-                    eventHandler(EntryFormEvent.ItemSelected(it?.id))
+            AsyncAutocompleteSelect(
+                value = state.selectedItem,
+                onValueChange = { newId ->
+                    eventHandler(EntryFormEvent.ItemSelected(newId))
                 },
+                getOptions = getItemOptions,
+                onCreateNew = onCreateNewItem,
                 label = { Text("Item") },
                 modifier = Modifier.fillMaxWidth()
             )

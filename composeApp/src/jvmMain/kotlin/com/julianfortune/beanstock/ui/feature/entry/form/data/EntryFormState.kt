@@ -1,12 +1,13 @@
 package com.julianfortune.beanstock.ui.feature.entry.form.data
 
+import com.julianfortune.beanstock.ui.common.data.Dynamic
 import com.julianfortune.beanstock.ui.common.data.Option
 
 
 data class EntryFormState(
     val title: String = "New Entry",
     val submissionText: String = "Create",
-    val selectedItemId: Long? = null,
+    val selectedItem: Dynamic<Option<Long>?> = Dynamic.Present(null),
     val itemWeightOptions: ItemWeightOptionsState = ItemWeightOptionsState.Disabled,
     val selectedItemWeightIndex: Int? = null,
     val unitWeight: UnitWeightState = UnitWeightState.LooseItems(),

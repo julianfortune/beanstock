@@ -12,7 +12,7 @@ class SupplierRepositoryTest {
 
     val database = runBlocking { createTestDatabase() }
 
-    val repository = SupplierRepository(database)
+    val repository = supplierRepositoryOf(database)
 
     @Test
     fun insert(): Unit = runBlocking {
@@ -34,7 +34,7 @@ class SupplierRepositoryTest {
         val updatedSupplierName = "FoodSource, LLC."
 
         // WHEN
-        repository.update(id, updatedSupplierName)
+        repository.updateNameById(id, updatedSupplierName)
 
         // THEN
         val rows = database.supplierQueries.getAll().awaitAsList()
@@ -47,7 +47,7 @@ class SupplierRepositoryTest {
         val id = repository.insert("FoodSource LLC").getOrThrow()
 
         // WHEN
-        val result = repository.delete(id).getOrThrow()
+        val result = repository.deleteById(id).getOrThrow()
 
         // THEN
         assertThat(result).isEqualTo(id)
