@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.map
 
 class ItemAutocompleteUseCase(private val itemRepository: ItemRepository) {
 
-    fun getOptions(query: String?): Flow<List<Option<Long>>> {
+    operator fun invoke(query: String?): Flow<List<Option<Long>>> {
         val itemHeadlines = when (query) {
             null -> itemRepository.getAll()
             else -> itemRepository.searchByName(query)

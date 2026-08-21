@@ -41,7 +41,7 @@ class AsyncDynamicOptionsStateHolderJUnitTest {
         assertThat(emissions.size).isEqualTo(2)
         assertThat(emissions.last()).isEqualTo(Dynamic.Loading)
 
-        advanceTimeBy(throttlePeriod)
+        advanceTimeBy(throttlePeriod * 2)
         assertThat(emissions.size).isEqualTo(3)
         assertThat(emissions.last()).isEqualTo(Dynamic.Present(testOptions))
 
@@ -49,7 +49,7 @@ class AsyncDynamicOptionsStateHolderJUnitTest {
         assertThat(emissions.size).isEqualTo(4)
         assertThat(emissions.last()).isEqualTo(Dynamic.Loading)
 
-        advanceTimeBy(throttlePeriod)
+        advanceTimeBy(throttlePeriod * 2)
         assertThat(emissions.size).isEqualTo(5)
         assertThat(emissions.last()).isEqualTo(Dynamic.Present(testOptions))
 

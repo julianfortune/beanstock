@@ -192,7 +192,7 @@ class EntryFormViewModel(
     )
 
     fun getItemOptionsForQuery(query: String?): Flow<List<Option<Long>>> {
-        return itemAutocompleteUseCase.getOptions(query)
+        return itemAutocompleteUseCase(query)
     }
 
     fun onCreateNewItem(name: String) {
