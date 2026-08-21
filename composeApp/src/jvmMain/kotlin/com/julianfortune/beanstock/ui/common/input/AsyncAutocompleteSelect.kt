@@ -15,14 +15,15 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun <ID> AsyncAutocompleteSelect(
     value: Dynamic<Option<ID>?>, // Selected ID
-    onValueChange: (ID?) -> Unit,
+    onValueChange: (ID?) -> Unit, // TODO(?): Option<ID>
     getOptions: (query: String?) -> Flow<List<Option<ID>>>,
-    onCreateNew: (name: String) -> Unit,
+    onCreateNew: ((name: String) -> Unit)? = null,
     label: @Composable (() -> Unit)? = null,
+    throttleTimeout: Duration = 300.milliseconds,
     modifier: Modifier = Modifier,
 ) {
-    val stateHolder = remember(getOptions) {
-        AsyncDynamicOptionsStateHolder(getOptions)
+    val stateHolder = remember(getOptions, throttleTimeout) {
+        AsyncDynamicOptionsStateHolder(getOptions, throttleTimeout)
     }
 
     val options by stateHolder.options.collectAsState(Dynamic.Loading)

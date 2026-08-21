@@ -20,7 +20,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class AsyncDynamicOptionsStateHolder<ID>(
     getOptions: (query: String?) -> Flow<List<Option<ID>>>,
-    debounceTimeout: Duration = 300.milliseconds,
+    debounceTimeout: Duration,
 ) {
     private val _queryFlow = MutableSharedFlow<String?>(extraBufferCapacity = 2)
     val queryFlow = _queryFlow
