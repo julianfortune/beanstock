@@ -128,28 +128,22 @@ fun ItemFormUi(
             state.format is ItemFormatState.Packaged,
         ) {
             Column {
-                Card {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(
-                            "Package sizes (weight)",
-                            modifier = Modifier.padding(horizontal = 8.dp)
-                        )
+                Text(
+                    "Package sizes (by weight)",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
+                )
 
-                        Spacer(modifier = Modifier.height(16.dp))
-                        HorizontalDivider(modifier = Modifier.height(1.dp))
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
+                OutlinedCard {
+                    Column {
                         (state.format as? ItemFormatState.Packaged)?.sizes?.let { packagingVariants ->
                             packagingVariants.forEachIndexed { index, text ->
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     modifier = Modifier
-                                        .height(44.dp)
-                                        .padding(start = 8.dp)
+                                        .height(64.dp)
+                                        .padding(start = 16.dp, end = 8.dp)
                                         .fillMaxWidth()
                                 ) {
                                     Text(text, fontFamily = FontFamily.Monospace)
@@ -164,16 +158,20 @@ fun ItemFormUi(
                                         )
                                     }
                                 }
+
+                                HorizontalDivider(Modifier.height(1.dp))
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        SavedWeightInlineForm(
-                            onSubmit = { body ->
-                                onAddWeight(body.weight)
-                            }
-                        )
+                        Row(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            SavedWeightInlineForm(
+                                onSubmit = { body ->
+                                    onAddWeight(body.weight)
+                                },
+                            )
+                        }
                     }
                 }
 

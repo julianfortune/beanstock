@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.julianfortune.beanstock.ui.theme.AppPreview
@@ -26,6 +27,7 @@ fun CompactOutlinedTextField(
     modifier: Modifier = Modifier,
     isError: Boolean = false,
     units: String? = null,
+    shape: Shape = CircleShape,
 ) {
     val state = rememberTextFieldState(value)
 
@@ -47,7 +49,7 @@ fun CompactOutlinedTextField(
         state = state,
         isError = isError,
         modifier = modifier.height(38.dp),
-        shape = CircleShape,
+        shape = shape,
         lineLimits = TextFieldLineLimits.SingleLine,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
         suffix = units?.let { { Text(it) } }
