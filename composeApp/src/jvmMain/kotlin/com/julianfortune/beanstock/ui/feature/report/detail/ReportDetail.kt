@@ -59,8 +59,6 @@ fun ReportDetail(
     SideSheet(
         state = (state as? ReportDetailState.Success)?.editCriteria,
         onDismissRequest = { viewModel.onCancelEditCriteria() },
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        tonalElevation = 1.dp,
         modifier = Modifier.width(640.dp),
     ) { editCriteria ->
         EditReportCriteriaForm(

@@ -18,8 +18,6 @@ fun <State> EntrySideSheet(
     SideSheet(
         state,
         onDismissRequest = onDismissRequest,
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        tonalElevation = 1.dp,
         modifier = Modifier.width(640.dp),
     ) { currentState ->
         Column(modifier = Modifier.padding(16.dp)) {
