@@ -31,6 +31,7 @@ fun DeliveryForm(
     onSubmit: (delivery: DeliveryBody) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // TODO: Add / replace with a ViewModel
     val stateHolder = remember(initialDelivery) {
         DeliveryFormStateHolder(
             initialDelivery
@@ -59,6 +60,7 @@ fun DeliveryFormUi(
     title: String,
     supplierOptions: List<Option<Long>>,
     state: DeliveryFormState,
+    // TODO: Create Event enum and replace with `eventHandler`
     onReceivedDateChange: (LocalDateInput?) -> Unit = {},
     onReceivedDateFocusLost: () -> Unit = {},
     onSupplierIdChange: (Long?) -> Unit = {},
