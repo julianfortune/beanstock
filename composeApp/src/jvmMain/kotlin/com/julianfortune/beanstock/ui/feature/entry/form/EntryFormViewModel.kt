@@ -6,7 +6,7 @@ import com.julianfortune.beanstock.data.model.CostStatus
 import com.julianfortune.beanstock.data.model.Item
 import com.julianfortune.beanstock.data.model.Weight
 import com.julianfortune.beanstock.data.repository.ItemRepository
-import com.julianfortune.beanstock.domain.ItemAutocompleteUseCase
+import com.julianfortune.beanstock.domain.GetItemOptionsUseCase
 import com.julianfortune.beanstock.ui.common.data.Dynamic
 import com.julianfortune.beanstock.ui.common.data.Option
 import com.julianfortune.beanstock.ui.common.formatWeight
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalCoroutinesApi::class)
 class EntryFormViewModel(
     private val itemRepository: ItemRepository,
-    private val itemAutocompleteUseCase: ItemAutocompleteUseCase,
+    private val getItemOptionsUseCase: GetItemOptionsUseCase,
     private val programOptionsProvider: ProgramOptionsProvider,
     private val accountOptionsProvider: AccountOptionsProvider,
 ) : ViewModel(),
@@ -192,7 +192,7 @@ class EntryFormViewModel(
     )
 
     fun getItemOptionsForQuery(query: String?): Flow<List<Option<Long>>> {
-        return itemAutocompleteUseCase(query)
+        return getItemOptionsUseCase(query)
     }
 
     fun onCreateNewItem(name: String) {

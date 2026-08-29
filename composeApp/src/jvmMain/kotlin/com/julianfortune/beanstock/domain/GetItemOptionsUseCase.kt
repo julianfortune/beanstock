@@ -5,7 +5,7 @@ import com.julianfortune.beanstock.ui.common.data.Option
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class ItemAutocompleteUseCase(private val itemRepository: ItemRepository) {
+class GetItemOptionsUseCase(private val itemRepository: ItemRepository) {
 
     operator fun invoke(query: String?): Flow<List<Option<Long>>> {
         val itemHeadlines = when (query) {
