@@ -74,6 +74,9 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "Beanstock"
             packageVersion = "1.0.0"
+            // TODO(?)
+            // vendor = "..."
+            // description = "..."
 
             modules("java.sql")
 
