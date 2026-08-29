@@ -76,6 +76,11 @@ compose.desktop {
             packageVersion = "1.0.0"
 
             modules("java.sql")
+
+            // Configure the Windows installer to create a Start Menu entry for the app
+            windows {
+                menu = true
+            }
         }
 
         // When running the application directly set the environment to 'development'
