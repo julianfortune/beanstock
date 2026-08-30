@@ -118,34 +118,40 @@ fun ReportDetailUi(
     onClickEditName: () -> Unit = {},
     onClickEditCriteria: () -> Unit = {},
 ) {
-    val title = (state as? ReportDetailState.Success)?.name ?: "Loading"
+    val title = when (state) {
+        is ReportDetailState.Success -> state.name
+        is ReportDetailState.Loading -> "Loading"
+        is ReportDetailState.Empty -> ""
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar(title) {
-            Row(
-                modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(
-                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).height(24.dp),
-                    onClick = onClickEditName
+            if (state is ReportDetailState.Success) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Edit,
-                        contentDescription = "Rename report",
-                        modifier = Modifier.height(16.dp)
-                    )
-                }
+                    IconButton(
+                        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).height(24.dp),
+                        onClick = onClickEditName
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Edit,
+                            contentDescription = "Rename report",
+                            modifier = Modifier.height(16.dp)
+                        )
+                    }
 
-                IconButton(
-                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
-                    onClick = onClickDelete
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Delete,
-                        contentDescription = "Delete report"
-                    )
+                    IconButton(
+                        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+                        onClick = onClickDelete
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Delete,
+                            contentDescription = "Delete report"
+                        )
+                    }
                 }
             }
         }

@@ -39,14 +39,16 @@ fun DeliveryDetail(
     val supplierOptions by viewModel.supplierOptions.collectAsState(emptyList())
 
     Column(modifier = Modifier.fillMaxSize()) {
-        (state as? DeliveryDetailState.Success)?.title?.let { title ->
-            DeliveryDetailTopBar(
-                title,
+        when (val current = state) {
+            is DeliveryDetailState.Empty -> TopBar("")
+            is DeliveryDetailState.Loading -> TopBar("Loading")
+            is DeliveryDetailState.Success -> DeliveryDetailTopBar(
+                current.title,
                 onClickDelete = {
                     viewModel.showDeleteDelivery()
                 }
             )
-        } ?: TopBar("Loading")
+        }
 
         Box(modifier = Modifier.fillMaxSize()) {
             val scrollState = rememberScrollState()

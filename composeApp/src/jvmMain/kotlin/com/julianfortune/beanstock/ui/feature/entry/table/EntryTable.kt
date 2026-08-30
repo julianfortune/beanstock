@@ -25,6 +25,7 @@ import com.julianfortune.beanstock.ui.common.component.ConfirmDeleteEntityForm
 import com.julianfortune.beanstock.ui.common.component.EntityOptionsDropdownMenu
 import com.julianfortune.beanstock.ui.common.data.Option
 import com.julianfortune.beanstock.ui.common.foundation.Dialog
+import com.julianfortune.beanstock.ui.common.foundation.ScrollableColumn
 import com.julianfortune.beanstock.ui.common.input.AutocompleteSelect
 import com.julianfortune.beanstock.ui.feature.entry.form.EntryForm
 import com.julianfortune.beanstock.ui.feature.entry.table.data.EntryAction
@@ -70,32 +71,38 @@ fun EntryTable(
                 state = (state.action as? EntryAction.Add),
                 onDismissRequest = { viewModel.cancelEntryOperation() },
             ) {
-                EntryForm(
-                    null,
-                    onCancel = {
-                        viewModel.cancelEntryOperation()
-                    },
-                    onSubmit = { entry ->
-                        viewModel.saveEntry(entry)
-                        viewModel.cancelEntryOperation()
-                    }
-                )
+                ScrollableColumn {
+                    EntryForm(
+                        null,
+                        onCancel = {
+                            viewModel.cancelEntryOperation()
+                        },
+                        onSubmit = { entry ->
+                            viewModel.saveEntry(entry)
+                            viewModel.cancelEntryOperation()
+                        },
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
             }
 
             EntrySideSheet(
                 state = (state.action as? EntryAction.Edit),
                 onDismissRequest = { viewModel.cancelEntryOperation() },
             ) { editAction ->
-                EntryForm(
-                    editAction.entry,
-                    onCancel = {
-                        viewModel.cancelEntryOperation()
-                    },
-                    onSubmit = { newEntry ->
-                        viewModel.updateEntry(editAction.id, newEntry)
-                        viewModel.cancelEntryOperation()
-                    }
-                )
+                ScrollableColumn {
+                    EntryForm(
+                        editAction.entry,
+                        onCancel = {
+                            viewModel.cancelEntryOperation()
+                        },
+                        onSubmit = { newEntry ->
+                            viewModel.updateEntry(editAction.id, newEntry)
+                            viewModel.cancelEntryOperation()
+                        },
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
             }
 
             when (val action = state.action) {

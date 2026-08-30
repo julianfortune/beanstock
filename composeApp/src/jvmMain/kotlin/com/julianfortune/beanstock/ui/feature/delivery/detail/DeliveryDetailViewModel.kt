@@ -38,7 +38,7 @@ class DeliveryDetailViewModel(
 
     val uiState: StateFlow<DeliveryDetailState> = deliveryViewCoordinator.state.map { viewerState ->
         when (viewerState) {
-            is DeliveryViewState.Empty -> DeliveryDetailState.Loading
+            is DeliveryViewState.Empty -> DeliveryDetailState.Empty
             is DeliveryViewState.Loading -> DeliveryDetailState.Loading
             is DeliveryViewState.Viewing -> {
                 val delivery = viewerState.currentDelivery

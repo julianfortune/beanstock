@@ -20,8 +20,6 @@ fun <State> EntrySideSheet(
         onDismissRequest = onDismissRequest,
         modifier = Modifier.width(640.dp),
     ) { currentState ->
-        Column(modifier = Modifier.padding(16.dp)) {
-            content(currentState)
-        }
+        content(currentState)
     }
 }

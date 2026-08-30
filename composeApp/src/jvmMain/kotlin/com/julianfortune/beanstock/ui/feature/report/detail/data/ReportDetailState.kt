@@ -4,6 +4,8 @@ import com.julianfortune.beanstock.data.model.*
 
 sealed interface ReportDetailState {
 
+    object Empty : ReportDetailState
+
     object Loading : ReportDetailState
 
     data class Success(
@@ -14,8 +16,6 @@ sealed interface ReportDetailState {
         val editName: String? = null,
         val editCriteria: ReportCriteriaBody? = null,
     ) : ReportDetailState
-
-    object Error : ReportDetailState
 
 }
 

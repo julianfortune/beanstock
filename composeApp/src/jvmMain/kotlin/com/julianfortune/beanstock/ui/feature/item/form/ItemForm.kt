@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.julianfortune.beanstock.data.model.Weight
 import com.julianfortune.beanstock.ui.common.data.Option
+import com.julianfortune.beanstock.ui.common.foundation.ScrollableColumn
 import com.julianfortune.beanstock.ui.common.input.AutocompleteSelect
 import com.julianfortune.beanstock.ui.common.input.DropdownSelect
 import com.julianfortune.beanstock.ui.feature.item.data.ItemBody
@@ -73,134 +74,136 @@ fun ItemFormUi(
     onSubmit: () -> Unit = {},
 ) {
 
-    Column(
-        modifier = Modifier.padding(16.dp),
-    ) {
+    ScrollableColumn {
         Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(16.dp),
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-
-            OutlinedTextField(
-                value = state.name.value,
-                onValueChange = onNameChange,
-                label = { Text("Name *") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp),
-                singleLine = true,
-                isError = false,
-                colors = OutlinedTextFieldDefaults.colors(),
-            )
-
-            AutocompleteSelect(
-                state.categoryId.value,
-                categoryOptions,
-                {
-                    onCategoryIdChange(it?.id)
-                },
-                label = { Text("Category") },
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            DropdownSelect(
-                state.format is ItemFormatState.Loose,
-                label = "Packaging",
-                options = listOf(
-                    Option(true, "Loose"),
-                    Option(false, "Packaged")
-                ),
-                onSelectedChange = {
-                    onIsLoosePackagingChange(it.id)
-                },
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        AnimatedVisibility(
-            state.format is ItemFormatState.Packaged,
-        ) {
-            Column {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Text(
-                    "Package sizes (by weight)",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
+                    text = title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center
                 )
 
-                OutlinedCard {
-                    Column {
-                        (state.format as? ItemFormatState.Packaged)?.sizes?.let { packagingVariants ->
-                            packagingVariants.forEachIndexed { index, text ->
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier
-                                        .height(64.dp)
-                                        .padding(start = 16.dp, end = 8.dp)
-                                        .fillMaxWidth()
-                                ) {
-                                    Text(text, fontFamily = FontFamily.Monospace)
+                OutlinedTextField(
+                    value = state.name.value,
+                    onValueChange = onNameChange,
+                    label = { Text("Name *") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(64.dp),
+                    singleLine = true,
+                    isError = false,
+                    colors = OutlinedTextFieldDefaults.colors(),
+                )
 
-                                    IconButton(
-                                        modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
-                                        onClick = { onDeleteWeight(index) }
+                AutocompleteSelect(
+                    state.categoryId.value,
+                    categoryOptions,
+                    {
+                        onCategoryIdChange(it?.id)
+                    },
+                    label = { Text("Category") },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                DropdownSelect(
+                    state.format is ItemFormatState.Loose,
+                    label = "Packaging",
+                    options = listOf(
+                        Option(true, "Loose"),
+                        Option(false, "Packaged")
+                    ),
+                    onSelectedChange = {
+                        onIsLoosePackagingChange(it.id)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            AnimatedVisibility(
+                state.format is ItemFormatState.Packaged,
+            ) {
+                Column {
+                    Text(
+                        "Package sizes (by weight)",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
+                    )
+
+                    OutlinedCard {
+                        Column {
+                            (state.format as? ItemFormatState.Packaged)?.sizes?.let { packagingVariants ->
+                                packagingVariants.forEachIndexed { index, text ->
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier
+                                            .height(64.dp)
+                                            .padding(start = 16.dp, end = 8.dp)
+                                            .fillMaxWidth()
                                     ) {
-                                        Icon(
-                                            imageVector = Icons.Outlined.Clear,
-                                            contentDescription = "Remove size"
-                                        )
-                                    }
-                                }
+                                        Text(text, fontFamily = FontFamily.Monospace)
 
-                                HorizontalDivider(Modifier.height(1.dp))
+                                        IconButton(
+                                            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+                                            onClick = { onDeleteWeight(index) }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Outlined.Clear,
+                                                contentDescription = "Remove size"
+                                            )
+                                        }
+                                    }
+
+                                    HorizontalDivider(Modifier.height(1.dp))
+                                }
+                            }
+
+                            Row(
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            ) {
+                                SavedWeightInlineForm(
+                                    onSubmit = { body ->
+                                        onAddWeight(body.weight)
+                                    },
+                                )
                             }
                         }
-
-                        Row(
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                        ) {
-                            SavedWeightInlineForm(
-                                onSubmit = { body ->
-                                    onAddWeight(body.weight)
-                                },
-                            )
-                        }
                     }
+
+                    Spacer(Modifier.height(16.dp))
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+                    onClick = onCancel
+                ) {
+                    Text("Cancel")
                 }
 
-                Spacer(Modifier.height(16.dp))
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Button(
+                    modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+                    enabled = state.isValid,
+                    onClick = onSubmit,
+                ) {
+                    Text(submitButtonText)
+                }
+
             }
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TextButton(
-                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
-                onClick = onCancel
-            ) {
-                Text("Cancel")
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Button(
-                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
-                enabled = state.isValid,
-                onClick = onSubmit,
-            ) {
-                Text(submitButtonText)
-            }
-
         }
     }
 

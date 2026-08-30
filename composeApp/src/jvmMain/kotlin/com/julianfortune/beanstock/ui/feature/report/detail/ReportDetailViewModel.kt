@@ -67,7 +67,7 @@ class ReportDetailViewModel(
             editNameState
         ) { viewerState, results, edit, name ->
             when (viewerState) {
-                is ReportViewState.Empty -> ReportDetailState.Loading
+                is ReportViewState.Empty -> ReportDetailState.Empty
                 is ReportViewState.Loading -> ReportDetailState.Loading
                 is ReportViewState.Viewing -> {
                     val report = viewerState.currentReport
