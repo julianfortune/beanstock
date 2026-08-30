@@ -3,7 +3,3 @@ windowTitle: 'Beanstock (DEV)'
 # Uses a DB saved in the repository
 db:
   location: WORKING_DIRECTORY
-
-feature:
-  reportDebug:
-    enabled: true

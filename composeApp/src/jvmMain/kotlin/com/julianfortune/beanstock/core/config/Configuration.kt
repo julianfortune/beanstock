@@ -6,11 +6,8 @@ import com.julianfortune.beanstock.core.system.Resources
 data class Configuration(
     val windowTitle: String,
     val db: Db,
-    val feature: Features
 ) {
     data class Db(val location: FileLocation)
-
-    data class Features(val reportDebug: FeatureFlag)
 
     companion object {
         fun getFileName(environment: Environment): String {
