@@ -6,7 +6,6 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +13,9 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.julianfortune.beanstock.core.util.unwrapUnsafe
+import com.julianfortune.beanstock.data.codec.LocalDateCodec
+import com.julianfortune.beanstock.data.common.EntityMetadata
 import com.julianfortune.beanstock.data.model.*
 import com.julianfortune.beanstock.ui.common.component.ConfirmDeleteEntityForm
 import com.julianfortune.beanstock.ui.common.component.TopBar
@@ -26,9 +28,11 @@ import com.julianfortune.beanstock.ui.feature.report.detail.data.ReportNameBody
 import com.julianfortune.beanstock.ui.feature.report.detail.data.ReportResultState
 import com.julianfortune.beanstock.ui.feature.report.detail.ui.EditReportCriteriaForm
 import com.julianfortune.beanstock.ui.feature.report.detail.ui.ReportCriteriaSection
+import com.julianfortune.beanstock.ui.feature.report.detail.ui.ReportDebugSection
 import com.julianfortune.beanstock.ui.feature.report.detail.ui.ReportResultSection
 import com.julianfortune.beanstock.ui.theme.AppPreview
 import org.koin.compose.viewmodel.koinViewModel
+import java.time.Instant
 
 
 private val contentMaxWidth = 960.dp
@@ -38,6 +42,7 @@ fun ReportDetail(
     viewModel: ReportDetailViewModel = koinViewModel(),
 ) {
     val state by viewModel.uiState.collectAsState()
+    val deliveriesState by viewModel.matchingDeliveriesState.collectAsState()
 
     val itemOptions by viewModel.itemOptions.collectAsState(emptyList())
     val categoryOptions by viewModel.categoryOptions.collectAsState(emptyList())
@@ -49,6 +54,7 @@ fun ReportDetail(
 
     ReportDetailUi(
         state = state,
+        deliveriesState = deliveriesState,
         onClickEditName = viewModel::onEditName,
         onClickEditCriteria = viewModel::onEditCriteria,
         onClickDelete = {
@@ -114,6 +120,7 @@ fun ReportDetail(
 @Composable
 fun ReportDetailUi(
     state: ReportDetailState,
+    deliveriesState: List<Delivery>?,
     onClickDelete: () -> Unit = {},
     onClickEditName: () -> Unit = {},
     onClickEditCriteria: () -> Unit = {},
@@ -166,7 +173,7 @@ fun ReportDetailUi(
                 Column(
                     modifier = Modifier.width(contentMaxWidth).padding(vertical = 32.dp, horizontal = 40.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(32.dp)
                 ) {
                     (state as? ReportDetailState.Success)?.criteria?.let { criteriaState ->
                         ReportCriteriaSection(
@@ -178,6 +185,13 @@ fun ReportDetailUi(
                     (state as? ReportDetailState.Success)?.results?.let { resultState ->
                         ReportResultSection(
                             resultState,
+                            Modifier.fillMaxSize()
+                        )
+                    }
+
+                    deliveriesState?.let { deliveries ->
+                        ReportDebugSection(
+                            deliveries,
                             Modifier.fillMaxSize()
                         )
                     }
@@ -212,6 +226,22 @@ fun ReportDetailUiPreview() = AppPreview {
                 "$0.00",
                 "$0.00"
             ),
+        ),
+        deliveriesState = listOf(
+            Delivery(
+                9L,
+                LocalDateCodec.deserialize("2026-01-01").unwrapUnsafe(),
+                Supplier(8L, "Harvest Prouce"),
+                taxesCents = 800,
+                feesCents = null,
+                listOf(
+//                    Delivery.Entry(
+//                        4L,
+//
+//                    )
+                ),
+                EntityMetadata(Instant.now(), Instant.now())
+            )
         )
     )
 }

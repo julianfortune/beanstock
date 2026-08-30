@@ -3,7 +3,9 @@ package com.julianfortune.beanstock.ui.feature.report.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.julianfortune.beanstock.core.util.formatCents
+import com.julianfortune.beanstock.data.model.Delivery
 import com.julianfortune.beanstock.data.model.ReportResult
+import com.julianfortune.beanstock.data.repository.DeliveryRepository
 import com.julianfortune.beanstock.data.repository.ReportRepository
 import com.julianfortune.beanstock.data.repository.ReportResultRepository
 import com.julianfortune.beanstock.ui.common.formatLocalDate
@@ -22,6 +24,7 @@ import java.time.format.FormatStyle
 class ReportDetailViewModel(
     private val reportRepository: ReportRepository,
     private val reportResultRepository: ReportResultRepository,
+    private val deliveryRepository: DeliveryRepository,
     private val reportViewCoordinator: ReportViewCoordinator,
     private val itemOptionsProvider: ItemOptionsProvider,
     private val categoryOptionsProvider: CategoryOptionsProvider,
@@ -44,6 +47,27 @@ class ReportDetailViewModel(
             is ReportViewState.Viewing -> {
                 val criteria = viewerState.currentReport.criteria
                 reportResultRepository.getResultsForBasicReportCriteria(
+                    criteria.start,
+                    criteria.end,
+                    criteria.item?.id,
+                    criteria.category?.id,
+                    criteria.costStatus,
+                    criteria.program?.id,
+                    criteria.account?.id,
+                    criteria.supplier?.id,
+                )
+            }
+
+            else -> flowOf(null)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val matchingDeliveries: Flow<List<Delivery>?> = reportViewCoordinator.state.flatMapLatest { viewerState ->
+        when (viewerState) {
+            is ReportViewState.Viewing -> {
+                val criteria = viewerState.currentReport.criteria
+                deliveryRepository.getDeliveriesByReportCriteria(
                     criteria.start,
                     criteria.end,
                     criteria.item?.id,
@@ -105,6 +129,12 @@ class ReportDetailViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = ReportDetailState.Loading
         )
+
+    val matchingDeliveriesState: StateFlow<List<Delivery>?> = matchingDeliveries.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = null
+    )
 
     fun onEditName() {
         when (val current = reportViewCoordinator.state.value) {

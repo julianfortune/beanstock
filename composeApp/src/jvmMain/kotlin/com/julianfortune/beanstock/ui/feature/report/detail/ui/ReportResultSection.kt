@@ -30,9 +30,9 @@ fun ReportResultSection(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = "Results",
+            text = "Summary",
             style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(0.dp, top = 24.dp, 0.dp, bottom = 8.dp)
+            modifier = Modifier.padding(vertical = 8.dp)
         )
 
         Spacer(Modifier.height(12.dp))

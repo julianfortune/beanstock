@@ -3,3 +3,7 @@ windowTitle: 'Beanstock'
 # Use a DB stored in the corresponding application data folder
 db:
   location: APP_DATA
+
+feature:
+  reportDebug:
+    enabled: true

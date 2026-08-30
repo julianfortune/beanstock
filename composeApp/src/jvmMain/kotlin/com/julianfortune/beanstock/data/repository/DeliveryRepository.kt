@@ -10,6 +10,7 @@ import com.julianfortune.beanstock.data.codec.LocalDateCodec
 import com.julianfortune.beanstock.data.common.EntityMetadata
 import com.julianfortune.beanstock.data.model.*
 import com.julianfortune.beanstock.db.Database
+import com.julianfortune.beanstock.db.GetAllByBasicReportCriteriaPaginated
 import com.julianfortune.beanstock.db.GetByDeliveryId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -70,6 +71,62 @@ class DeliveryRepository(private val database: Database) {
         }.distinctUntilChanged() // Only emit when data actually changes
     }
 
+    /**
+     * NOTE: Only returns the first 1000
+     */
+    fun getDeliveriesByReportCriteria(
+        startDate: LocalDate,
+        endDate: LocalDate,
+        itemId: Long? = null,
+        itemCategoryId: Long? = null,
+        costStatus: CostStatus? = null,
+        programId: Long? = null,
+        purchasingAccountId: Long? = null,
+        supplierId: Long? = null,
+    ): Flow<List<Delivery>> {
+        return database.deliveryEntryQueries.getAllByBasicReportCriteriaPaginated(
+            LocalDateCodec.serialize(startDate),
+            LocalDateCodec.serialize(endDate),
+            itemId,
+            itemCategoryId,
+            costStatus?.let { CostStatusCodec.serialize(it) },
+            programId,
+            purchasingAccountId,
+            supplierId,
+            1000,
+            0,
+        )
+            .asFlow()
+            .mapToList(Dispatchers.IO)
+            .map { rows ->
+                rows.groupBy { it.deliveryId }.map { (deliveryId, rows) ->
+                    val firstRow = rows.first()
+
+                    // TODO: Error handling
+                    val received = LocalDateCodec.deserialize(firstRow.deliveryReceivedDate).unwrapUnsafe()
+                    val supplier = supplierFromJoinedRow(firstRow.deliverySupplierId, firstRow.supplierName)
+                    val metadata = EntityMetadata.ofEpochSeconds(
+                        firstRow.deliveryCreatedAtEpochSeconds,
+                        firstRow.updatedAtEpochSeconds,
+                    )
+
+                    val entries = rows.map {
+                        entryFromRow(it)
+                    }
+
+                    Delivery(
+                        id = deliveryId,
+                        received = received,
+                        supplier = supplier,
+                        taxesCents = firstRow.deliveryTaxesCents,
+                        feesCents = firstRow.deliveryFeesCents,
+                        entries = entries,
+                        metadata = metadata
+                    )
+                }
+            }
+    }
+
     private fun supplierFromJoinedRow(supplierId: Long, supplierName: String?): Supplier {
         require(supplierName != null) {
             "Supplier name must be defined when supplierId is defined due to foreign key constraint"
@@ -111,6 +168,29 @@ class DeliveryRepository(private val database: Database) {
             metadata
         )
     }
+
+    // DUMB >:(
+    // TODO(?): Maybe can fix with Lens ?
+    private fun entryFromRow(row: GetAllByBasicReportCriteriaPaginated): Delivery.Entry = entryFromRow(
+        GetByDeliveryId(
+            row.id,
+            row.deliveryId,
+            row.itemId,
+            row.unitCount,
+            row.itemWeightCentigrams,
+            row.itemsPerUnit,
+            row.unitWeightCentigrams,
+            row.costStatus,
+            row.unitCostCents,
+            row.programId,
+            row.purchasingAccountId,
+            row.createdAtEpochSeconds,
+            row.updatedAtEpochSeconds,
+            row.itemName,
+            row.programName,
+            row.purchasingAccountName,
+        )
+    )
 
     suspend fun insertDelivery(
         received: LocalDate,
