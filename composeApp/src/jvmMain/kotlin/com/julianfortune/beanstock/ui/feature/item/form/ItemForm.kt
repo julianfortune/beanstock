@@ -75,26 +75,20 @@ fun ItemFormUi(
 ) {
 
     ScrollableColumn {
-        Column(
-            modifier = Modifier.padding(16.dp),
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
 
                 OutlinedTextField(
                     value = state.name.value,
                     onValueChange = onNameChange,
                     label = { Text("Name *") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp),
+                    modifier = Modifier.fillMaxWidth().height(64.dp),
                     singleLine = true,
                     isError = false,
                     colors = OutlinedTextFieldDefaults.colors(),
@@ -113,27 +107,26 @@ fun ItemFormUi(
                 DropdownSelect(
                     state.format is ItemFormatState.Loose,
                     label = "Packaging",
-                    options = listOf(
-                        Option(true, "Loose"),
-                        Option(false, "Packaged")
-                    ),
+                    options =
+                        listOf(
+                            Option(true, "Loose"),
+                            Option(false, "Packaged"),
+                        ),
                     onSelectedChange = {
                         onIsLoosePackagingChange(it.id)
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            AnimatedVisibility(
-                state.format is ItemFormatState.Packaged,
-            ) {
+            AnimatedVisibility(state.format is ItemFormatState.Packaged) {
                 Column {
                     Text(
                         "Package sizes (by weight)",
                         style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
                     )
 
                     OutlinedCard {
@@ -143,20 +136,18 @@ fun ItemFormUi(
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier
-                                            .height(64.dp)
-                                            .padding(start = 16.dp, end = 8.dp)
-                                            .fillMaxWidth()
+                                        modifier =
+                                            Modifier.height(64.dp).padding(start = 16.dp, end = 8.dp).fillMaxWidth(),
                                     ) {
                                         Text(text, fontFamily = FontFamily.Monospace)
 
                                         IconButton(
                                             modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
-                                            onClick = { onDeleteWeight(index) }
+                                            onClick = { onDeleteWeight(index) },
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Outlined.Clear,
-                                                contentDescription = "Remove size"
+                                                contentDescription = "Remove size",
                                             )
                                         }
                                     }
@@ -165,13 +156,11 @@ fun ItemFormUi(
                                 }
                             }
 
-                            Row(
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                            ) {
+                            Row(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
                                 SavedWeightInlineForm(
                                     onSubmit = { body ->
                                         onAddWeight(body.weight)
-                                    },
+                                    }
                                 )
                             }
                         }
@@ -184,11 +173,11 @@ fun ItemFormUi(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 TextButton(
                     modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
-                    onClick = onCancel
+                    onClick = onCancel,
                 ) {
                     Text("Cancel")
                 }
@@ -202,11 +191,9 @@ fun ItemFormUi(
                 ) {
                     Text(submitButtonText)
                 }
-
             }
         }
     }
-
 }
 
 @Preview
@@ -216,8 +203,6 @@ fun ItemFormUiPreview() = AppPreview {
         title = "Title",
         submitButtonText = "Save",
         categoryOptions = emptyList(),
-        state = ItemFormState(
-            format = ItemFormatState.Packaged(listOf("8oz", "1lb 8oz"))
-        )
+        state = ItemFormState(format = ItemFormatState.Packaged(listOf("8oz", "1lb 8oz"))),
     )
 }

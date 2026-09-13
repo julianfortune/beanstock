@@ -4,6 +4,7 @@ import com.julianfortune.beanstock.ui.common.data.FormFieldState
 
 sealed interface ItemFormatState {
     data object Loose : ItemFormatState
+
     data class Packaged(val sizes: List<String>) : ItemFormatState
 }
 

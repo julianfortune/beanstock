@@ -13,45 +13,45 @@ import androidx.compose.ui.unit.dp
 import com.julianfortune.beanstock.data.common.NamedEntity
 import com.julianfortune.beanstock.ui.page.namedentity.NamedEntityPageViewModel
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T: NamedEntity> UpdateNamedEntityForm(
+fun <T : NamedEntity> UpdateNamedEntityForm(
     viewModel: NamedEntityPageViewModel<T>,
     title: String,
     submitButtonText: String,
     initialData: T? = null,
-    onSubmit: (updatedName: String) -> Unit
+    onSubmit: (updatedName: String) -> Unit,
 ) {
     var name by remember { mutableStateOf(initialData?.name ?: "") }
 
-    val isValid = remember(name) {
-        name != ""
-    }
+    val isValid =
+        remember(name) {
+            name != ""
+        }
 
     Column(
         modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             text = title,
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
             label = { Text("Name *") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-                .onFocusChanged({ state ->
-                    if (!state.isFocused) {
-                        // Check for error
-                    }
-                }),
+            modifier =
+                Modifier.fillMaxWidth()
+                    .height(64.dp)
+                    .onFocusChanged({ state ->
+                        if (!state.isFocused) {
+                            // Check for error
+                        }
+                    }),
             singleLine = true,
             isError = false,
             colors = OutlinedTextFieldDefaults.colors(),
@@ -60,13 +60,13 @@ fun <T: NamedEntity> UpdateNamedEntityForm(
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             TextButton(
                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                 onClick = {
                     viewModel.dismissOperation()
-                }
+                },
             ) {
                 Text("Cancel")
             }
@@ -84,5 +84,4 @@ fun <T: NamedEntity> UpdateNamedEntityForm(
             }
         }
     }
-
 }

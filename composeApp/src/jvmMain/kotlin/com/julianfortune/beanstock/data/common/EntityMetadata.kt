@@ -7,9 +7,10 @@ data class EntityMetadata(
     val updatedAt: Instant,
 ) {
     companion object {
-        fun ofEpochSeconds(createdAtEpochSeconds: Long, updatedAtEpochSeconds: Long) = EntityMetadata(
-            Instant.ofEpochSecond(createdAtEpochSeconds),
-            Instant.ofEpochSecond(createdAtEpochSeconds)
-        )
+        fun ofEpochSeconds(createdAtEpochSeconds: Long, updatedAtEpochSeconds: Long) =
+            EntityMetadata(
+                Instant.ofEpochSecond(createdAtEpochSeconds),
+                Instant.ofEpochSecond(createdAtEpochSeconds),
+            )
     }
 }

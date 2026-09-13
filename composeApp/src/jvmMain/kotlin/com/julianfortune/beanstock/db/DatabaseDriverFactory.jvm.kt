@@ -18,11 +18,11 @@ actual class DatabaseDriverFactory(val databaseDirectory: Path) {
         // NOTE: `foreign_keys` are disabled by default
         val properties = Properties().apply { put("foreign_keys", "true") }
 
-        val driver = JdbcSqliteDriver("jdbc:sqlite:${databasePath}", properties).also {
-            Database.Schema.create(it).await()
-        }
+        val driver =
+            JdbcSqliteDriver("jdbc:sqlite:${databasePath}", properties).also {
+                Database.Schema.create(it).await()
+            }
 
         return driver
     }
-
 }

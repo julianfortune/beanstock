@@ -4,8 +4,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.v2.Window
 import androidx.compose.ui.window.application
+import androidx.compose.ui.window.v2.Window
 import androidx.compose.ui.window.v2.WindowBoundsProvider
 import androidx.compose.ui.window.v2.WindowSizeProvider
 import androidx.compose.ui.window.v2.rememberWindowState
@@ -18,10 +18,10 @@ import com.julianfortune.beanstock.core.config.FileLocation
 import com.julianfortune.beanstock.core.system.AppDataManager
 import com.julianfortune.beanstock.core.system.Platform
 import com.julianfortune.beanstock.db.DatabaseDriverFactory
+import java.nio.file.Paths
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import java.nio.file.Paths
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 fun main() {
@@ -35,13 +35,14 @@ fun main() {
 
     val adm = AppDataManager(Platform.current)
 
-    val databaseDirectory = when (configuration.db.location) {
-        FileLocation.APP_DATA -> {
-            adm.initialize()
-            adm.appDataPath
+    val databaseDirectory =
+        when (configuration.db.location) {
+            FileLocation.APP_DATA -> {
+                adm.initialize()
+                adm.appDataPath
+            }
+            FileLocation.WORKING_DIRECTORY -> Paths.get("")
         }
-        FileLocation.WORKING_DIRECTORY -> Paths.get("")
-    }
 
     // Debug output
     println("osName=${Platform.osName}")
@@ -55,17 +56,17 @@ fun main() {
     startKoin {
         modules(
             appModule,
-            module { single { driver } }
+            module { single { driver } },
         )
     }
 
     application {
         // Customize the initial state of the window
-        val windowState = rememberWindowState(
-            initialBoundsProvider = WindowBoundsProvider(
-                sizeProvider = WindowSizeProvider.Fixed(size = DpSize(1200.dp, 700.dp))
+        val windowState =
+            rememberWindowState(
+                initialBoundsProvider =
+                    WindowBoundsProvider(sizeProvider = WindowSizeProvider.Fixed(size = DpSize(1200.dp, 700.dp)))
             )
-        )
 
         Window(
             onCloseRequest = ::exitApplication,

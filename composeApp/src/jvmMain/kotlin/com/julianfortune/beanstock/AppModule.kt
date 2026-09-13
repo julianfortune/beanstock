@@ -70,40 +70,38 @@ val appModule = module {
 
     // Use cases
     single {
-        GetItemOptionsUseCase(
-            itemRepository = get()
-        )
+        GetItemOptionsUseCase(itemRepository = get())
     }
 
     // ViewModel delegates
     single<CategoryOptionsProvider> {
         DefaultCategoryOptionsProvider(
             categoryRepository = get(Qualifiers.categoryRepository),
-            scope = CoroutineScope(Dispatchers.Default)
+            scope = CoroutineScope(Dispatchers.Default),
         )
     }
     single<ItemOptionsProvider> {
         DefaultItemOptionsProvider(
             itemRepository = get(),
-            scope = CoroutineScope(Dispatchers.Default)
+            scope = CoroutineScope(Dispatchers.Default),
         )
     }
     single<ProgramOptionsProvider> {
         DefaultProgramOptionsProvider(
             programRepository = get(Qualifiers.programRepository),
-            scope = CoroutineScope(Dispatchers.Default)
+            scope = CoroutineScope(Dispatchers.Default),
         )
     }
     single<AccountOptionsProvider> {
         DefaultAccountOptionsProvider(
             accountRepository = get(Qualifiers.accountRepository),
-            scope = CoroutineScope(Dispatchers.Default)
+            scope = CoroutineScope(Dispatchers.Default),
         )
     }
     single<SupplierOptionsProvider> {
         DefaultSupplierOptionsProvider(
             supplierRepository = get(Qualifiers.supplierRepository),
-            scope = CoroutineScope(Dispatchers.Default)
+            scope = CoroutineScope(Dispatchers.Default),
         )
     }
 
@@ -138,7 +136,7 @@ val appModule = module {
             get(),
             get(),
             get(),
-            get()
+            get(),
         )
     }
     viewModel {
@@ -169,5 +167,4 @@ val appModule = module {
     viewModel(named("supplierViewModel")) {
         NamedEntityPageViewModel<Supplier>(get(Qualifiers.supplierRepository))
     }
-
 }

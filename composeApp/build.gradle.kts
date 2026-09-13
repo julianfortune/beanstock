@@ -1,3 +1,4 @@
+import com.diffplug.spotless.kotlin.KtfmtStep
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -5,8 +6,29 @@ plugins {
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.spotless)
     alias(libs.plugins.sqldelight)
     id("java-test-fixtures")
+}
+
+// Formatting configuration
+configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+    kotlin {
+        target("src/*/kotlin/**/*.kt")
+
+        ktfmt("0.64").kotlinlangStyle().configure {
+            it.setMaxWidth(120)
+            it.setTrailingCommaManagementStrategy(KtfmtStep.TrailingCommaManagementStrategy.COMPLETE)
+        }
+    }
+
+    kotlinGradle {
+        // targets "*.gradle.kts"
+        ktfmt("0.64").kotlinlangStyle().configure {
+            it.setMaxWidth(120)
+            it.setTrailingCommaManagementStrategy(KtfmtStep.TrailingCommaManagementStrategy.COMPLETE)
+        }
+    }
 }
 
 kotlin {

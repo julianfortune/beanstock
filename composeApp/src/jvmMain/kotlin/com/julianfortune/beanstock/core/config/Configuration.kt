@@ -22,5 +22,4 @@ data class Configuration(
             return Resources.load(mapper, fileName)
         }
     }
-
 }

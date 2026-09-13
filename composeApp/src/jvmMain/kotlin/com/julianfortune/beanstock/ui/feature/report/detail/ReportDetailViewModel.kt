@@ -16,10 +16,10 @@ import com.julianfortune.beanstock.ui.feature.report.detail.data.ReportCriteriaB
 import com.julianfortune.beanstock.ui.feature.report.detail.data.ReportCriteriaState
 import com.julianfortune.beanstock.ui.feature.report.detail.data.ReportDetailState
 import com.julianfortune.beanstock.ui.feature.report.detail.data.ReportResultState
+import java.time.format.FormatStyle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.time.format.FormatStyle
 
 class ReportDetailViewModel(
     private val reportRepository: ReportRepository,
@@ -31,7 +31,8 @@ class ReportDetailViewModel(
     private val programOptionsProvider: ProgramOptionsProvider,
     private val accountOptionsProvider: AccountOptionsProvider,
     private val supplierOptionsProvider: SupplierOptionsProvider,
-) : ViewModel(),
+) :
+    ViewModel(),
     ItemOptionsProvider by itemOptionsProvider,
     CategoryOptionsProvider by categoryOptionsProvider,
     ProgramOptionsProvider by programOptionsProvider,
@@ -42,99 +43,105 @@ class ReportDetailViewModel(
     private val editCriteriaState = MutableStateFlow<ReportCriteriaBody?>(null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val results: Flow<ReportResult?> = reportViewCoordinator.state.flatMapLatest { viewerState ->
-        when (viewerState) {
-            is ReportViewState.Viewing -> {
-                val criteria = viewerState.currentReport.criteria
-                reportResultRepository.getResultsForBasicReportCriteria(
-                    criteria.start,
-                    criteria.end,
-                    criteria.item?.id,
-                    criteria.category?.id,
-                    criteria.costStatus,
-                    criteria.program?.id,
-                    criteria.account?.id,
-                    criteria.supplier?.id,
-                )
-            }
+    private val results: Flow<ReportResult?> =
+        reportViewCoordinator.state.flatMapLatest { viewerState ->
+            when (viewerState) {
+                is ReportViewState.Viewing -> {
+                    val criteria = viewerState.currentReport.criteria
+                    reportResultRepository.getResultsForBasicReportCriteria(
+                        criteria.start,
+                        criteria.end,
+                        criteria.item?.id,
+                        criteria.category?.id,
+                        criteria.costStatus,
+                        criteria.program?.id,
+                        criteria.account?.id,
+                        criteria.supplier?.id,
+                    )
+                }
 
-            else -> flowOf(null)
+                else -> flowOf(null)
+            }
         }
-    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val matchingDeliveries: Flow<List<Delivery>?> = reportViewCoordinator.state.flatMapLatest { viewerState ->
-        when (viewerState) {
-            is ReportViewState.Viewing -> {
-                val criteria = viewerState.currentReport.criteria
-                deliveryRepository.getDeliveriesByReportCriteria(
-                    criteria.start,
-                    criteria.end,
-                    criteria.item?.id,
-                    criteria.category?.id,
-                    criteria.costStatus,
-                    criteria.program?.id,
-                    criteria.account?.id,
-                    criteria.supplier?.id,
-                )
-            }
+    private val matchingDeliveries: Flow<List<Delivery>?> =
+        reportViewCoordinator.state.flatMapLatest { viewerState ->
+            when (viewerState) {
+                is ReportViewState.Viewing -> {
+                    val criteria = viewerState.currentReport.criteria
+                    deliveryRepository.getDeliveriesByReportCriteria(
+                        criteria.start,
+                        criteria.end,
+                        criteria.item?.id,
+                        criteria.category?.id,
+                        criteria.costStatus,
+                        criteria.program?.id,
+                        criteria.account?.id,
+                        criteria.supplier?.id,
+                    )
+                }
 
-            else -> flowOf(null)
+                else -> flowOf(null)
+            }
         }
-    }
 
     val uiState: StateFlow<ReportDetailState> =
         combine(
-            reportViewCoordinator.state,
-            results,
-            editCriteriaState,
-            editNameState
-        ) { viewerState, results, edit, name ->
-            when (viewerState) {
-                is ReportViewState.Empty -> ReportDetailState.Empty
-                is ReportViewState.Loading -> ReportDetailState.Loading
-                is ReportViewState.Viewing -> {
-                    val report = viewerState.currentReport
+                reportViewCoordinator.state,
+                results,
+                editCriteriaState,
+                editNameState,
+            ) { viewerState, results, edit, name ->
+                when (viewerState) {
+                    is ReportViewState.Empty -> ReportDetailState.Empty
+                    is ReportViewState.Loading -> ReportDetailState.Loading
+                    is ReportViewState.Viewing -> {
+                        val report = viewerState.currentReport
 
-                    ReportDetailState.Success(
-                        basicReportId = report.id,
-                        name = report.name,
-                        criteria = ReportCriteriaState(
-                            formatLocalDate(report.criteria.start, FormatStyle.SHORT),
-                            formatLocalDate(report.criteria.end, FormatStyle.SHORT),
-                            report.criteria.item,
-                            report.criteria.category,
-                            report.criteria.costStatus,
-                            report.criteria.program,
-                            report.criteria.account,
-                            report.criteria.supplier,
-                        ),
-                        results = results?.let {
-                            ReportResultState(
-                                results.deliveryCount,
-                                results.entryCount,
-                                results.totalWeight.toPounds().toString(),
-                                "$${formatCents(results.totalCostCents)}",
-                                "$${formatCents(results.totalDeliveryTaxesCents)}",
-                                "$${formatCents(results.totalDeliveryFeesCents)}",
-                            )
-                        },
-                        editCriteria = edit,
-                        editName = name,
-                    )
+                        ReportDetailState.Success(
+                            basicReportId = report.id,
+                            name = report.name,
+                            criteria =
+                                ReportCriteriaState(
+                                    formatLocalDate(report.criteria.start, FormatStyle.SHORT),
+                                    formatLocalDate(report.criteria.end, FormatStyle.SHORT),
+                                    report.criteria.item,
+                                    report.criteria.category,
+                                    report.criteria.costStatus,
+                                    report.criteria.program,
+                                    report.criteria.account,
+                                    report.criteria.supplier,
+                                ),
+                            results =
+                                results?.let {
+                                    ReportResultState(
+                                        results.deliveryCount,
+                                        results.entryCount,
+                                        results.totalWeight.toPounds().toString(),
+                                        "$${formatCents(results.totalCostCents)}",
+                                        "$${formatCents(results.totalDeliveryTaxesCents)}",
+                                        "$${formatCents(results.totalDeliveryFeesCents)}",
+                                    )
+                                },
+                            editCriteria = edit,
+                            editName = name,
+                        )
+                    }
                 }
             }
-        }.stateIn(
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = ReportDetailState.Loading,
+            )
+
+    val matchingDeliveriesState: StateFlow<List<Delivery>?> =
+        matchingDeliveries.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = ReportDetailState.Loading
+            initialValue = null,
         )
-
-    val matchingDeliveriesState: StateFlow<List<Delivery>?> = matchingDeliveries.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = null
-    )
 
     fun onEditName() {
         when (val current = reportViewCoordinator.state.value) {
@@ -150,10 +157,11 @@ class ReportDetailViewModel(
         when (val current = reportViewCoordinator.state.value) {
             is ReportViewState.Viewing -> {
                 viewModelScope.launch {
-                    val result = reportRepository.updateName(
-                        current.currentReport.id,
-                        newName,
-                    )
+                    val result =
+                        reportRepository.updateName(
+                            current.currentReport.id,
+                            newName,
+                        )
 
                     // TODO: Error-handling
                     result.getOrThrow()
@@ -188,16 +196,17 @@ class ReportDetailViewModel(
         when (val current = reportViewCoordinator.state.value) {
             is ReportViewState.Viewing -> {
                 val currentCriteria = current.currentReport.criteria
-                editCriteriaState.value = ReportCriteriaBody(
-                    currentCriteria.start,
-                    currentCriteria.end,
-                    currentCriteria.item?.id,
-                    currentCriteria.category?.id,
-                    currentCriteria.costStatus,
-                    currentCriteria.program?.id,
-                    currentCriteria.account?.id,
-                    currentCriteria.supplier?.id,
-                )
+                editCriteriaState.value =
+                    ReportCriteriaBody(
+                        currentCriteria.start,
+                        currentCriteria.end,
+                        currentCriteria.item?.id,
+                        currentCriteria.category?.id,
+                        currentCriteria.costStatus,
+                        currentCriteria.program?.id,
+                        currentCriteria.account?.id,
+                        currentCriteria.supplier?.id,
+                    )
             }
 
             else -> return
@@ -208,18 +217,19 @@ class ReportDetailViewModel(
         when (val current = reportViewCoordinator.state.value) {
             is ReportViewState.Viewing -> {
                 viewModelScope.launch {
-                    val result = reportRepository.update(
-                        current.currentReport.id,
-                        current.currentReport.name,
-                        newCriteria.start,
-                        newCriteria.end,
-                        newCriteria.itemId,
-                        newCriteria.categoryId,
-                        newCriteria.costStatus,
-                        newCriteria.programId,
-                        newCriteria.accountId,
-                        newCriteria.supplierId,
-                    )
+                    val result =
+                        reportRepository.update(
+                            current.currentReport.id,
+                            current.currentReport.name,
+                            newCriteria.start,
+                            newCriteria.end,
+                            newCriteria.itemId,
+                            newCriteria.categoryId,
+                            newCriteria.costStatus,
+                            newCriteria.programId,
+                            newCriteria.accountId,
+                            newCriteria.supplierId,
+                        )
 
                     // TODO: Error-handling
                     result.getOrThrow()
@@ -229,11 +239,9 @@ class ReportDetailViewModel(
 
             else -> return
         }
-
     }
 
     fun onCancelEditCriteria() {
         editCriteriaState.value = null
     }
-
 }

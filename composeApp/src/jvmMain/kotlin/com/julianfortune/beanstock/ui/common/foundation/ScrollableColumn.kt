@@ -12,28 +12,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.julianfortune.beanstock.ui.theme.dynamicScrollbarStyle
 
-
 @Composable
 fun ScrollableColumn(
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Box(modifier = modifier) {
         val scrollState = rememberScrollState()
 
-        Column(
-            modifier = Modifier.fillMaxWidth().verticalScroll(scrollState)
-        ) {
+        Column(modifier = Modifier.fillMaxWidth().verticalScroll(scrollState)) {
             content()
         }
 
         VerticalScrollbar(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .fillMaxHeight()
-                .padding(2.dp),
+            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight().padding(2.dp),
             adapter = rememberScrollbarAdapter(scrollState),
-            style = dynamicScrollbarStyle(MaterialTheme.colorScheme.onBackground)
+            style = dynamicScrollbarStyle(MaterialTheme.colorScheme.onBackground),
         )
     }
 }

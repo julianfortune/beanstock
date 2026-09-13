@@ -9,15 +9,16 @@ import kotlinx.coroutines.flow.stateIn
 
 class DefaultCategoryOptionsProvider(
     categoryRepository: NamedEntityRepository<Category>,
-    scope: CoroutineScope
+    scope: CoroutineScope,
 ) : CategoryOptionsProvider {
 
-    override val categoryOptions = categoryRepository.getAll()
-        .map { entities -> entities.map { it.toOption() } }
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = emptyList()
-        )
-
+    override val categoryOptions =
+        categoryRepository
+            .getAll()
+            .map { entities -> entities.map { it.toOption() } }
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = emptyList(),
+            )
 }

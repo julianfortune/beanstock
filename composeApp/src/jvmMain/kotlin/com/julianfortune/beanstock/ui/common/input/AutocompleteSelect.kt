@@ -7,10 +7,7 @@ import androidx.compose.ui.Modifier
 import com.julianfortune.beanstock.ui.common.data.Dynamic
 import com.julianfortune.beanstock.ui.common.data.Option
 
-
-/**
- * Wrapper around a generic combo-box for selecting from a static list of options (with user typing to filter)
- */
+/** Wrapper around a generic combo-box for selecting from a static list of options (with user typing to filter) */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun <ID> AutocompleteSelect(
@@ -24,21 +21,23 @@ fun <ID> AutocompleteSelect(
         mutableStateOf<String?>(null)
     }
 
-    val selectedOption: Option<ID>? = remember(selectedOptionId, options) {
-        selectedOptionId?.let {
-            options.firstOrNull { it.id == selectedOptionId }
-        }
-    }
-
-    val filteredOptions = remember(query, options) {
-        if (query != null) {
-            options.filter { option ->
-                option.label.contains(query!!, ignoreCase = true)
+    val selectedOption: Option<ID>? =
+        remember(selectedOptionId, options) {
+            selectedOptionId?.let {
+                options.firstOrNull { it.id == selectedOptionId }
             }
-        } else {
-            options
         }
-    }
+
+    val filteredOptions =
+        remember(query, options) {
+            if (query != null) {
+                options.filter { option ->
+                    option.label.contains(query!!, ignoreCase = true)
+                }
+            } else {
+                options
+            }
+        }
 
     ComboBox(
         Dynamic.Present(selectedOption),

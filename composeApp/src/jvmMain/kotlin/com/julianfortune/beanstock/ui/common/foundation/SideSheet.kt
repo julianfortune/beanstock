@@ -27,10 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 
-
-/**
- * SideSheet for displaying static content
- */
+/** SideSheet for displaying static content */
 @Composable
 fun SideSheet(
     isVisible: Boolean,
@@ -71,10 +68,7 @@ fun SideSheet(
     }
 }
 
-
-/**
- * SideSheet for displaying dynamic content based on `state`
- */
+/** SideSheet for displaying dynamic content based on `state` */
 @Composable
 fun <State> SideSheet(
     state: State?,
@@ -146,9 +140,10 @@ fun SideSheetUi(
     if (isTransitioning || visibleState.currentState) {
         Popup(
             onDismissRequest = onDismissRequest,
-            properties = PopupProperties(
-                focusable = true, // Allow 'esc' to close
-            )
+            properties =
+                PopupProperties(
+                    focusable = true // Allow 'esc' to close
+                ),
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
 
@@ -159,12 +154,10 @@ fun SideSheetUi(
                     exit = fadeOut(),
                 ) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(scrimColor)
-                            .clickable(
+                        modifier =
+                            Modifier.fillMaxSize().background(scrimColor).clickable(
                                 interactionSource = remember { MutableInteractionSource() },
-                                indication = null
+                                indication = null,
                             ) {
                                 onDismissRequest()
                             }
@@ -181,17 +174,19 @@ fun SideSheetUi(
                         modifier = Modifier.fillMaxSize(),
                         horizontalArrangement = Arrangement.End,
                     ) {
-                        val spacerModifier = when (leadingSpaceWidth) {
-                            null -> Modifier.weight(1f, true)
-                            else -> Modifier.width(leadingSpaceWidth)
-                        }
+                        val spacerModifier =
+                            when (leadingSpaceWidth) {
+                                null -> Modifier.weight(1f, true)
+                                else -> Modifier.width(leadingSpaceWidth)
+                            }
 
                         Spacer(spacerModifier)
 
-                        val surfaceModifier = when (weight) {
-                            null -> modifier.fillMaxHeight()
-                            else -> modifier.fillMaxHeight().weight(weight)
-                        }
+                        val surfaceModifier =
+                            when (weight) {
+                                null -> modifier.fillMaxHeight()
+                                else -> modifier.fillMaxHeight().weight(weight)
+                            }
 
                         Surface(
                             modifier = surfaceModifier,
@@ -215,9 +210,7 @@ fun SideSheetUi(
 @Preview
 private fun SideSheetPreview() {
     MaterialTheme {
-        SideSheetUi(
-            weight = 1f
-        ) {
+        SideSheetUi(weight = 1f) {
             Column(
                 modifier = Modifier.fillMaxHeight(),
                 verticalArrangement = Arrangement.Center,

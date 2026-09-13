@@ -2,14 +2,14 @@ package com.julianfortune.beanstock.data.repository
 
 import app.cash.sqldelight.async.coroutines.awaitAsOne
 import com.julianfortune.beanstock.createTestDatabase
+import java.time.Instant
+import kotlin.properties.Delegates
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.time.Instant
-import kotlin.properties.Delegates
 
 class CategoryRepositoryTest {
 
@@ -36,19 +36,21 @@ class CategoryRepositoryTest {
             @BeforeEach
             fun setUp() {
                 reportId = runBlocking {
-                    database.basicReportQueries.insert(
-                        "Example Report",
-                        "2026-01-01",
-                        "2026-01-31",
-                        null,
-                        categoryId,
-                        null,
-                        null,
-                        null,
-                        null,
-                        Instant.now().epochSecond,
-                        Instant.now().epochSecond,
-                    ).awaitAsOne()
+                    database.basicReportQueries
+                        .insert(
+                            "Example Report",
+                            "2026-01-01",
+                            "2026-01-31",
+                            null,
+                            categoryId,
+                            null,
+                            null,
+                            null,
+                            null,
+                            Instant.now().epochSecond,
+                            Instant.now().epochSecond,
+                        )
+                        .awaitAsOne()
                 }
 
                 runBlocking {

@@ -17,65 +17,71 @@ import com.julianfortune.beanstock.ui.feature.delivery.detail.data.DeliveryActio
 import com.julianfortune.beanstock.ui.feature.delivery.detail.data.DeliveryContentState
 import com.julianfortune.beanstock.ui.feature.delivery.detail.data.DeliveryDetailState
 import com.julianfortune.beanstock.ui.feature.delivery.form.data.DeliveryBody
+import java.time.format.FormatStyle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.time.format.FormatStyle
-
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DeliveryDetailViewModel(
     private val deliveryRepository: DeliveryRepository,
     private val deliveryViewCoordinator: DeliveryViewCoordinator,
-    supplierOptionsProvider: SupplierOptionsProvider
+    supplierOptionsProvider: SupplierOptionsProvider,
 ) : ViewModel(), SupplierOptionsProvider by supplierOptionsProvider {
 
     private val _deliveryAction = mutableStateOf<DeliveryAction?>(null)
     val deliveryAction: State<DeliveryAction?> = _deliveryAction
 
-    val uiState: StateFlow<DeliveryDetailState> = deliveryViewCoordinator.state.map { viewerState ->
-        when (viewerState) {
-            is DeliveryViewState.Empty -> DeliveryDetailState.Empty
-            is DeliveryViewState.Loading -> DeliveryDetailState.Loading
-            is DeliveryViewState.Viewing -> {
-                val delivery = viewerState.currentDelivery
-                val title = "Delivery " + formatLocalDate(
-                    delivery.received,
-                    FormatStyle.MEDIUM
-                ) + " • ${delivery.supplier.name}"
-                val totalCount = (delivery.entries.sumOf { it.unitCount }).toString()
-                val totalWeight = calculateDeliveryTotalWeightPounds(delivery).toString()
-                val subtotal = "$" + formatCents(calculateDeliverySubTotalCostCents(delivery))
-                val fees = "$" + formatCents(delivery.feesCents ?: 0)
-                val taxes = "$" + formatCents(delivery.taxesCents ?: 0)
-                val total = "$" + formatCents(calculateDeliveryTotalCostCents(delivery))
+    val uiState: StateFlow<DeliveryDetailState> =
+        deliveryViewCoordinator.state
+            .map { viewerState ->
+                when (viewerState) {
+                    is DeliveryViewState.Empty -> DeliveryDetailState.Empty
+                    is DeliveryViewState.Loading -> DeliveryDetailState.Loading
+                    is DeliveryViewState.Viewing -> {
+                        val delivery = viewerState.currentDelivery
+                        val title =
+                            "Delivery " +
+                                formatLocalDate(
+                                    delivery.received,
+                                    FormatStyle.MEDIUM,
+                                ) +
+                                " • ${delivery.supplier.name}"
+                        val totalCount = (delivery.entries.sumOf { it.unitCount }).toString()
+                        val totalWeight = calculateDeliveryTotalWeightPounds(delivery).toString()
+                        val subtotal = "$" + formatCents(calculateDeliverySubTotalCostCents(delivery))
+                        val fees = "$" + formatCents(delivery.feesCents ?: 0)
+                        val taxes = "$" + formatCents(delivery.taxesCents ?: 0)
+                        val total = "$" + formatCents(calculateDeliveryTotalCostCents(delivery))
 
-                val content = DeliveryContentState(
-                    delivery.id,
-                    formatLocalDate(delivery.received, FormatStyle.MEDIUM),
-                    delivery.supplier.name,
-                    totalCount,
-                    totalWeight,
-                    subtotal,
-                    fees,
-                    taxes,
-                    total,
-                )
+                        val content =
+                            DeliveryContentState(
+                                delivery.id,
+                                formatLocalDate(delivery.received, FormatStyle.MEDIUM),
+                                delivery.supplier.name,
+                                totalCount,
+                                totalWeight,
+                                subtotal,
+                                fees,
+                                taxes,
+                                total,
+                            )
 
-                DeliveryDetailState.Success(
-                    title = title,
-                    content = content,
-                )
+                        DeliveryDetailState.Success(
+                            title = title,
+                            content = content,
+                        )
+                    }
+                }
             }
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = DeliveryDetailState.Loading
-    )
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = DeliveryDetailState.Loading,
+            )
 
     fun updateDelivery(id: Long, delivery: DeliveryBody) {
         viewModelScope.launch {
@@ -100,12 +106,13 @@ class DeliveryDetailViewModel(
         when (val current = deliveryViewCoordinator.state.value) {
             is DeliveryViewState.Viewing -> {
                 val delivery = current.currentDelivery
-                val body = DeliveryBody(
-                    delivery.received,
-                    delivery.supplier.id,
-                    delivery.taxesCents,
-                    delivery.feesCents,
-                )
+                val body =
+                    DeliveryBody(
+                        delivery.received,
+                        delivery.supplier.id,
+                        delivery.taxesCents,
+                        delivery.feesCents,
+                    )
                 _deliveryAction.value = DeliveryAction.Edit(delivery.id, body)
             }
 
@@ -130,9 +137,7 @@ class DeliveryDetailViewModel(
     fun cancelDeliveryOperation() {
         _deliveryAction.value = null
     }
-
 }
-
 
 fun calculateEntryTotalCostCents(entry: Delivery.Entry): Long {
     if (entry.costStatus == CostStatus.NO_COST) {

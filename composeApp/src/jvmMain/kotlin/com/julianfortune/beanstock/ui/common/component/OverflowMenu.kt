@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun OverflowMenu(
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.(onDismiss: () -> Unit) -> Unit
+    content: @Composable ColumnScope.(onDismiss: () -> Unit) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val dismiss = { expanded = false }
@@ -25,19 +25,17 @@ fun OverflowMenu(
     Box(modifier = modifier) {
         IconButton(
             onClick = { expanded = !expanded },
-            modifier = Modifier
-                .size(28.dp)
-                .pointerHoverIcon(PointerIcon.Hand)
+            modifier = Modifier.size(28.dp).pointerHoverIcon(PointerIcon.Hand),
         ) {
             Icon(
                 Icons.Default.MoreVert,
-                contentDescription = "More options"
+                contentDescription = "More options",
             )
         }
 
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = dismiss
+            onDismissRequest = dismiss,
         ) {
             content(dismiss)
         }

@@ -30,11 +30,12 @@ class SavedWeightStateHolderTest {
 
     @ParameterizedTest
     @CsvSource(
-        value = [
-            "5, 8.5, 250893",
-            "1,    ,  45359",
-            " ,  .1,    283",
-        ]
+        value =
+            [
+                "5, 8.5, 250893",
+                "1,    ,  45359",
+                " ,  .1,    283",
+            ]
     )
     fun `Valid inputs result in a submittable state`(pounds: String?, ounces: String?, expectedCentigrams: Long) {
         println("pounds: $pounds, ounces: $ounces")
@@ -50,13 +51,14 @@ class SavedWeightStateHolderTest {
 
     @ParameterizedTest
     @CsvSource(
-        value = [
-            " -1,    5",
-            "   ,     ",
-            "abc,     ",
-            "   ,    .",
-            "   , -1.0",
-        ]
+        value =
+            [
+                " -1,    5",
+                "   ,     ",
+                "abc,     ",
+                "   ,    .",
+                "   , -1.0",
+            ]
     )
     fun `Invalid inputs result in an invalid state`(pounds: String?, ounces: String?) {
         // GIVEN / WHEN

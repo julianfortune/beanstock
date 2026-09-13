@@ -16,20 +16,23 @@ class ReportHeadlineListViewModel(
     private val reportViewCoordinator: ReportViewCoordinator,
 ) : ViewModel() {
 
-    val selectedId = reportViewCoordinator.state.map {
-        when (it) {
-            ReportViewState.Empty -> null
-            ReportViewState.Loading -> null
-            is ReportViewState.Viewing -> it.currentReport.id
+    val selectedId =
+        reportViewCoordinator.state.map {
+            when (it) {
+                ReportViewState.Empty -> null
+                ReportViewState.Loading -> null
+                is ReportViewState.Viewing -> it.currentReport.id
+            }
         }
-    }
 
-    val allReports = reportRepository.getAllAsHeadlines()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = emptyList()
-        )
+    val allReports =
+        reportRepository
+            .getAllAsHeadlines()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = emptyList(),
+            )
 
     fun onSelect(id: Long) {
         reportViewCoordinator.view(id)
@@ -37,17 +40,18 @@ class ReportHeadlineListViewModel(
 
     fun createNewReport(body: CreateReportBody) {
         viewModelScope.launch {
-            val result = reportRepository.insert(
-                body.name,
-                body.start,
-                body.end,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-            )
+            val result =
+                reportRepository.insert(
+                    body.name,
+                    body.start,
+                    body.end,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                )
 
             result.map { newId ->
                 reportViewCoordinator.view(newId)

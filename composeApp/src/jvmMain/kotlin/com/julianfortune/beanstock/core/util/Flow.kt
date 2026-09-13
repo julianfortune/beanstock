@@ -1,5 +1,7 @@
 package com.julianfortune.beanstock.core.util
 
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -7,8 +9,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 
 fun <T> Flow<T>.throttle(minimumDelay: Duration): Flow<T> = flow {
     var lastEmittedAtEpochMillis = 0L

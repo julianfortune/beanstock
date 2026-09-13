@@ -12,12 +12,11 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalCoroutinesApi::class)
 class DeliveryHeadlineListViewModel(
     private val deliveryViewCoordinator: DeliveryViewCoordinator,
     private val deliveryRepository: DeliveryRepository,
-    supplierOptionsProvider: SupplierOptionsProvider
+    supplierOptionsProvider: SupplierOptionsProvider,
 ) : ViewModel(), SupplierOptionsProvider by supplierOptionsProvider {
 
     sealed interface UiEvent {
@@ -25,29 +24,34 @@ class DeliveryHeadlineListViewModel(
     }
 
     private val _uiEventChannel = Channel<UiEvent>(Channel.BUFFERED)
-    val uiEvent: StateFlow<UiEvent?> = _uiEventChannel.receiveAsFlow()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = null
-        )
+    val uiEvent: StateFlow<UiEvent?> =
+        _uiEventChannel
+            .receiveAsFlow()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = null,
+            )
 
-    val selectedId = deliveryViewCoordinator.state.map {
-        when (it) {
-            DeliveryViewState.Empty -> null
-            DeliveryViewState.Loading -> null
-            is DeliveryViewState.Viewing -> it.currentDelivery.id
+    val selectedId =
+        deliveryViewCoordinator.state.map {
+            when (it) {
+                DeliveryViewState.Empty -> null
+                DeliveryViewState.Loading -> null
+                is DeliveryViewState.Viewing -> it.currentDelivery.id
+            }
         }
-    }
 
     // TODO(P3): Sorting, default: By receivedDate and then createdDatetime
     // TODO(P5): Filtering, e.g., by time period
-    val allDeliveries = deliveryRepository.getAllAsHeadlines()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = emptyList()
-        )
+    val allDeliveries =
+        deliveryRepository
+            .getAllAsHeadlines()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = emptyList(),
+            )
 
     fun onSelect(id: Long) {
         deliveryViewCoordinator.view(id)
@@ -55,12 +59,13 @@ class DeliveryHeadlineListViewModel(
 
     fun saveNewDelivery(delivery: DeliveryBody) {
         viewModelScope.launch {
-            val result = deliveryRepository.insertDelivery(
-                delivery.received,
-                delivery.supplierId,
-                delivery.taxesCents,
-                delivery.feesCents,
-            )
+            val result =
+                deliveryRepository.insertDelivery(
+                    delivery.received,
+                    delivery.supplierId,
+                    delivery.taxesCents,
+                    delivery.feesCents,
+                )
 
             result.map { newId ->
                 _uiEventChannel.send(UiEvent.DeliveryCreated(newId))

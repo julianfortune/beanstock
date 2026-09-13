@@ -11,11 +11,12 @@ class AppDataManager(platform: Platform) {
     companion object {
         // Path to the directory for application data relative to the user's home
         // Source: https://platformdirs.readthedocs.io/en/latest/platforms.html
-        val relativePathByPlatform = mapOf(
-            Platform.WINDOWS to "\\AppData\\Local\\", // Note: Need to prefix with `System.getProperty("user.home")`
-            Platform.LINUX to "/.local/share/", //Note: Prefix with `~`
-            Platform.MACOS to "/Library/Application Support/", // Note: Prefix with `~`
-        )
+        val relativePathByPlatform =
+            mapOf(
+                Platform.WINDOWS to "\\AppData\\Local\\", // Note: Need to prefix with `System.getProperty("user.home")`
+                Platform.LINUX to "/.local/share/", // Note: Prefix with `~`
+                Platform.MACOS to "/Library/Application Support/", // Note: Prefix with `~`
+            )
     }
 
     private val userHome = System.getProperty("user.home")

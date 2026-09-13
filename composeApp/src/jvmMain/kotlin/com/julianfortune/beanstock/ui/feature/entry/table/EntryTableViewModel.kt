@@ -18,86 +18,92 @@ import com.julianfortune.beanstock.ui.feature.entry.table.data.EntryAction
 import com.julianfortune.beanstock.ui.feature.entry.table.data.EntryRowState
 import com.julianfortune.beanstock.ui.feature.entry.table.data.EntryTableState
 import com.julianfortune.beanstock.ui.feature.entry.table.data.SelectionState
+import kotlin.math.roundToLong
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlin.math.roundToLong
 
 class EntryTableViewModel(
     private val deliveryViewCoordinator: DeliveryViewCoordinator,
     private val deliveryRepository: DeliveryRepository,
     programOptionsProvider: ProgramOptionsProvider,
     accountOptionsProvider: AccountOptionsProvider,
-) : ViewModel(),
-    ProgramOptionsProvider by programOptionsProvider,
-    AccountOptionsProvider by accountOptionsProvider {
+) : ViewModel(), ProgramOptionsProvider by programOptionsProvider, AccountOptionsProvider by accountOptionsProvider {
 
     private val entryAction = MutableStateFlow<EntryAction?>(null)
     private val selectionEnabled = MutableStateFlow(false)
     private val selectedEntryRows = MutableStateFlow<Set<Long>>(emptySet())
 
-    val uiState: StateFlow<EntryTableState?> = combine(
-        deliveryViewCoordinator.state,
-        entryAction,
-        selectionEnabled,
-        selectedEntryRows,
-    ) { viewerState, entryAction, selectionEnabled, selections ->
-        when (viewerState) {
-            is DeliveryViewState.Empty, is DeliveryViewState.Loading -> null
-            is DeliveryViewState.Viewing -> {
-                val delivery = viewerState.currentDelivery
+    val uiState: StateFlow<EntryTableState?> =
+        combine(
+                deliveryViewCoordinator.state,
+                entryAction,
+                selectionEnabled,
+                selectedEntryRows,
+            ) { viewerState, entryAction, selectionEnabled, selections ->
+                when (viewerState) {
+                    is DeliveryViewState.Empty,
+                    is DeliveryViewState.Loading -> null
+                    is DeliveryViewState.Viewing -> {
+                        val delivery = viewerState.currentDelivery
 
-                val selectionState = when {
-                    selectionEnabled -> {
-                        val selectAll = when (selections.size) {
-                            0 -> ToggleableState.Off
-                            else -> {
-                                val unselectedEntries = delivery.entries.map { it.id }.toSet().minus(selections)
-                                when (unselectedEntries.size) {
-                                    0 -> ToggleableState.On
-                                    else -> ToggleableState.Indeterminate
+                        val selectionState =
+                            when {
+                                selectionEnabled -> {
+                                    val selectAll =
+                                        when (selections.size) {
+                                            0 -> ToggleableState.Off
+                                            else -> {
+                                                val unselectedEntries =
+                                                    delivery.entries.map { it.id }.toSet().minus(selections)
+                                                when (unselectedEntries.size) {
+                                                    0 -> ToggleableState.On
+                                                    else -> ToggleableState.Indeterminate
+                                                }
+                                            }
+                                        }
+                                    SelectionState.Enabled(selections.size, selectAll)
                                 }
+
+                                else -> SelectionState.Disabled
                             }
-                        }
-                        SelectionState.Enabled(selections.size, selectAll)
+
+                        val entryRows =
+                            delivery.entries.map { e ->
+                                val totalWeight = calculateEntryTotalWeight(e)
+                                val totalCostCents = "$" + formatCents(calculateEntryTotalCostCents(e))
+                                EntryRowState(
+                                    e.id,
+                                    e.id in selections,
+                                    e.item.name,
+                                    e.program?.name,
+                                    e.account?.name,
+                                    e.unitCount.toString(),
+                                    totalWeight.toPounds().toString(),
+                                    totalCostCents,
+                                )
+                            }
+
+                        val totalCount = (delivery.entries.sumOf { it.unitCount }).toString()
+                        val totalWeight =
+                            ((calculateDeliveryTotalWeightPounds(delivery) * 10).roundToLong() / 10f).toString()
+                        val subtotal = "$" + formatCents(calculateDeliverySubTotalCostCents(delivery))
+
+                        EntryTableState(
+                            entryRows,
+                            selectionState,
+                            entryAction,
+                            totalCount,
+                            totalWeight,
+                            subtotal,
+                        )
                     }
-
-                    else -> SelectionState.Disabled
                 }
-
-                val entryRows = delivery.entries.map { e ->
-                    val totalWeight = calculateEntryTotalWeight(e)
-                    val totalCostCents = "$" + formatCents(calculateEntryTotalCostCents(e))
-                    EntryRowState(
-                        e.id,
-                        e.id in selections,
-                        e.item.name,
-                        e.program?.name,
-                        e.account?.name,
-                        e.unitCount.toString(),
-                        totalWeight.toPounds().toString(),
-                        totalCostCents,
-                    )
-                }
-
-                val totalCount = (delivery.entries.sumOf { it.unitCount }).toString()
-                val totalWeight = ((calculateDeliveryTotalWeightPounds(delivery) * 10).roundToLong() / 10f).toString()
-                val subtotal = "$" + formatCents(calculateDeliverySubTotalCostCents(delivery))
-
-                EntryTableState(
-                    entryRows,
-                    selectionState,
-                    entryAction,
-                    totalCount,
-                    totalWeight,
-                    subtotal
-                )
             }
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = null
-    )
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = null,
+            )
 
     fun showAddEntry() {
         entryAction.value = EntryAction.Add
@@ -108,17 +114,18 @@ class EntryTableViewModel(
             is DeliveryViewState.Viewing -> {
                 // TODO(P1): Better error handling ...
                 val entry = current.currentDelivery.entries.find { it.id == entryId }!!
-                val body = EntryBody(
-                    entry.item.id,
-                    entry.unitCount,
-                    entry.unitWeight,
-                    entry.costStatus,
-                    entry.unitCostCents,
-                    entry.itemWeight,
-                    entry.itemsPerUnit,
-                    entry.program?.id,
-                    entry.account?.id,
-                )
+                val body =
+                    EntryBody(
+                        entry.item.id,
+                        entry.unitCount,
+                        entry.unitWeight,
+                        entry.costStatus,
+                        entry.unitCostCents,
+                        entry.itemWeight,
+                        entry.itemsPerUnit,
+                        entry.program?.id,
+                        entry.account?.id,
+                    )
 
                 entryAction.value = EntryAction.Edit(entry.id, body)
             }
@@ -251,5 +258,4 @@ class EntryTableViewModel(
             deliveryRepository.deleteDeliveryEntryById(id)
         }
     }
-
 }

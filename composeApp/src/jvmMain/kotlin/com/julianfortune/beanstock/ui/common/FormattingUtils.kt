@@ -14,9 +14,10 @@ fun formatLocalDate(d: LocalDate, style: FormatStyle = FormatStyle.MEDIUM): Stri
 fun formatWeight(weight: Weight): String {
     val (lbs, oz) = weight.toImperial()
     val lbsString = if (lbs != 0L) "${lbs}lb" else null
-    val ozString = if (oz > 0) {
-        oz.toString().removeSuffix(".0") + "oz"
-    } else null
+    val ozString =
+        if (oz > 0) {
+            oz.toString().removeSuffix(".0") + "oz"
+        } else null
 
     return listOfNotNull(lbsString, ozString).joinToString(" ")
 }

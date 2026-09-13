@@ -1,6 +1,5 @@
 package com.julianfortune.beanstock.ui.feature.delivery.detail.ui
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
@@ -21,7 +20,6 @@ import com.julianfortune.beanstock.ui.common.component.KeyValueList
 private val horizontalContentPadding = 24.dp
 private val horizontalTextPadding = 16.dp
 
-
 @Composable
 fun DeliveryHeader(
     receivedDate: String,
@@ -31,38 +29,35 @@ fun DeliveryHeader(
     onClickEdit: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth()
-            .padding(horizontal = horizontalContentPadding),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = horizontalContentPadding),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.Start,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 text = "Details",
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = horizontalTextPadding)
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = horizontalTextPadding),
             )
 
             Row {
                 IconButton(
                     modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
-                    onClick = onClickEdit
+                    onClick = onClickEdit,
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Edit,
-                        contentDescription = "Edit details"
+                        contentDescription = "Edit details",
                     )
                 }
             }
         }
 
-        KeyValueList(
-            modifier = Modifier.widthIn(max = 360.dp).padding(horizontal = horizontalTextPadding)
-        ) {
+        KeyValueList(modifier = Modifier.widthIn(max = 360.dp).padding(horizontal = horizontalTextPadding)) {
             KeyValueItem(Icons.Outlined.CalendarMonth, "Received", receivedDate)
             KeyValueItem(Icons.Outlined.Storefront, "Supplier", supplierName)
             KeyValueItem(Icons.Outlined.Gavel, "Taxes", taxes, FontFamily.Monospace)
@@ -82,35 +77,42 @@ fun DeliverySummary(
         Text(
             text = "Summary",
             style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(16.dp, top = 24.dp, 16.dp, bottom = 8.dp)
+            modifier = Modifier.padding(16.dp, top = 24.dp, 16.dp, bottom = 8.dp),
         )
         Spacer(Modifier.height(12.dp))
 
-        KeyValueList(
-            modifier = Modifier
-                .widthIn(max = 360.dp)
-                .padding(horizontal = horizontalTextPadding)
-        ) {
+        KeyValueList(modifier = Modifier.widthIn(max = 360.dp).padding(horizontal = horizontalTextPadding)) {
             KeyValueItem(
-                Icons.Outlined.Summarize, "Subtotal", subtotal, FontFamily.Monospace
+                Icons.Outlined.Summarize,
+                "Subtotal",
+                subtotal,
+                FontFamily.Monospace,
             )
             KeyValueItem(
-                Icons.Outlined.Gavel, "Taxes", taxes, FontFamily.Monospace
+                Icons.Outlined.Gavel,
+                "Taxes",
+                taxes,
+                FontFamily.Monospace,
             )
             KeyValueItem(
-                Icons.Outlined.CreditCard, "Fees", fees, FontFamily.Monospace
+                Icons.Outlined.CreditCard,
+                "Fees",
+                fees,
+                FontFamily.Monospace,
             )
             KeyValueItem(
-                Icons.Outlined.Money, "Total", total, FontFamily.Monospace
+                Icons.Outlined.Money,
+                "Total",
+                total,
+                FontFamily.Monospace,
             )
-
         }
     }
 }
 
-//@Preview
-//@Composable
-//fun DeliveryPageContentPreview() {
+// @Preview
+// @Composable
+// fun DeliveryPageContentPreview() {
 //    AppPreview {
 //        DeliveryPageContent(
 //            DeliveryContentState(
@@ -132,11 +134,11 @@ fun DeliverySummary(
 //            {},
 //        )
 //    }
-//}
+// }
 //
-//@Preview
-//@Composable
-//fun DeliveryPageContentMaximalistPreview() {
+// @Preview
+// @Composable
+// fun DeliveryPageContentMaximalistPreview() {
 //    AppPreview {
 //        DeliveryPageContent(
 //            DeliveryContentState(
@@ -158,4 +160,4 @@ fun DeliverySummary(
 //            {},
 //        )
 //    }
-//}
+// }

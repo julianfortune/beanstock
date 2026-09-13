@@ -16,7 +16,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-
 class ComboBoxStateHolder<ID>(
     initialSelection: Dynamic<Option<ID>?>,
     initialOptions: Dynamic<List<Option<ID>>>,
@@ -29,9 +28,10 @@ class ComboBoxStateHolder<ID>(
     private val textFieldState = TextFieldState(getTitle(initialSelection))
 
     // Inelegant mechanism for distinguishing user vs. programmatic mutations of `textFieldState`
-    private var isProgrammaticEditing: Boolean by mutableStateOf(
-        true // The initial state is set programmatically
-    )
+    private var isProgrammaticEditing: Boolean by
+        mutableStateOf(
+            true // The initial state is set programmatically
+        )
 
     // NOTE: `_` prevents kotlin-generated setters from clashing with our methods below
     private var _selection: Dynamic<Option<ID>?> by mutableStateOf(initialSelection)
@@ -55,25 +55,26 @@ class ComboBoxStateHolder<ID>(
             .launchIn(scope)
     }
 
-    fun eventHandler(uiEvent: ComboBoxUiEvent<ID>) = when (uiEvent) {
-        is ComboBoxUiEvent.ToggleClicked -> _expanded = true // Only opens
-        is ComboBoxUiEvent.DismissRequested -> _expanded = false
-        is ComboBoxUiEvent.Focused -> _expanded = true
-        is ComboBoxUiEvent.Unfocused -> _expanded = false
+    fun eventHandler(uiEvent: ComboBoxUiEvent<ID>) =
+        when (uiEvent) {
+            is ComboBoxUiEvent.ToggleClicked -> _expanded = true // Only opens
+            is ComboBoxUiEvent.DismissRequested -> _expanded = false
+            is ComboBoxUiEvent.Focused -> _expanded = true
+            is ComboBoxUiEvent.Unfocused -> _expanded = false
 
-        is ComboBoxUiEvent.UpdateSelection<ID> -> {
-            _expanded = false
-            onSelectionChange(uiEvent.newSelection)
-        }
+            is ComboBoxUiEvent.UpdateSelection<ID> -> {
+                _expanded = false
+                onSelectionChange(uiEvent.newSelection)
+            }
 
-        ComboBoxUiEvent.ClearSelection -> {
-            onSelectionChange(null)
-        }
+            ComboBoxUiEvent.ClearSelection -> {
+                onSelectionChange(null)
+            }
 
-        is ComboBoxUiEvent.CreateNew -> {
-            onCreateNew?.invoke(uiEvent.name)
+            is ComboBoxUiEvent.CreateNew -> {
+                onCreateNew?.invoke(uiEvent.name)
+            }
         }
-    }
 
     fun setSelection(newSelection: Dynamic<Option<ID>?>) {
         _selection = newSelection
@@ -104,11 +105,12 @@ class ComboBoxStateHolder<ID>(
 
     val uiState: ComboBoxState<ID> by derivedStateOf {
         val placeholder = ComboBoxDefaults.Text.PROMPT
-        val trailingIcon = when {
-            _selection is Dynamic.Loading -> ComboBoxIcon.LOADING
-            (_selection as? Dynamic.Present)?.value != null -> ComboBoxIcon.CLEAR
-            else -> ComboBoxIcon.CARET
-        }
+        val trailingIcon =
+            when {
+                _selection is Dynamic.Loading -> ComboBoxIcon.LOADING
+                (_selection as? Dynamic.Present)?.value != null -> ComboBoxIcon.CLEAR
+                else -> ComboBoxIcon.CARET
+            }
         // Disable interactions if selection is loading
         val enabled = _selection is Dynamic.Present && _enabled
 
@@ -120,7 +122,7 @@ class ComboBoxStateHolder<ID>(
             _options,
             enabled,
             _expanded,
-            canCreateNew = onCreateNew != null
+            canCreateNew = onCreateNew != null,
         )
     }
 }

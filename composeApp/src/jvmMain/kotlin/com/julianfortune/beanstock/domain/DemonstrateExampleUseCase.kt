@@ -7,11 +7,8 @@ class DemonstrateExampleUseCase(
     // Inject repositories (and/or other use-cases)
 ) {
 
-    /**
-     * Perform some complex or shared logic
-     */
+    /** Perform some complex or shared logic */
     operator fun invoke(): Flow<List<String>> =
         // TODO ...
         emptyFlow()
-
 }

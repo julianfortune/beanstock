@@ -6,7 +6,6 @@ import dev.forkhandles.result4k.Success
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-
 object LocalDateCodec : Codec<LocalDate> {
     private val formatter = DateTimeFormatter.ISO_LOCAL_DATE
 

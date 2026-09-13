@@ -39,9 +39,7 @@ class CostStatusCodecTest {
     }
 
     @ParameterizedTest
-    @CsvSource(
-        "invalid",
-    )
+    @CsvSource("invalid")
     fun deserializeInvalidInput(invalidInput: String) {
         // WHEN
         val result = CostStatusCodec.deserialize(invalidInput)
@@ -49,5 +47,4 @@ class CostStatusCodecTest {
         // THEN
         assertThat(result).isInstanceOf(Failure::class.java)
     }
-
 }

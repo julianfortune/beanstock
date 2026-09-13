@@ -28,10 +28,13 @@ fun <ID> DropdownSelect(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    val selectedOption = remember(selectedId, options) {
-        options.firstOrNull { it.id == selectedId }
-            ?: throw IndexOutOfBoundsException("SelectedId ($selectedId) does not correspond to any value in `options`")
-    }
+    val selectedOption =
+        remember(selectedId, options) {
+            options.firstOrNull { it.id == selectedId }
+                ?: throw IndexOutOfBoundsException(
+                    "SelectedId ($selectedId) does not correspond to any value in `options`"
+                )
+        }
 
     LaunchedEffect(enabled) {
         if (!enabled) {
@@ -46,18 +49,15 @@ fun <ID> DropdownSelect(
                 expanded = !expanded
             }
         },
-        modifier = modifier.pointerHoverIcon(
-            when {
-                enabled -> PointerIcon.Hand
-                else -> PointerIcon.Default
-            }
-        )
+        modifier =
+            modifier.pointerHoverIcon(
+                when {
+                    enabled -> PointerIcon.Hand
+                    else -> PointerIcon.Default
+                }
+            ),
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-        ) {
+        Box(modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)) {
             OutlinedTextField(
                 value = selectedOption.label,
                 onValueChange = {},
@@ -67,32 +67,33 @@ fun <ID> DropdownSelect(
                 singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(),
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
-                modifier = Modifier.height(64.dp).fillMaxWidth()
+                modifier = Modifier.height(64.dp).fillMaxWidth(),
             )
 
             // Transparent overlay to prevent the user able to interact with text box at all
             Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .clickable(interactionSource = null, indication = null, onClick = {}),
+                modifier =
+                    Modifier.matchParentSize().clickable(interactionSource = null, indication = null, onClick = {})
             )
         }
 
         // TODO(#81): Share with ComboBox
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
         ) {
             options.forEach { option ->
                 val isSelected = option.id == selectedOption.id
 
                 // Use colors to highlight selected item
-                val backgroundColor = if (isSelected) {
-                    MaterialTheme.colorScheme.primaryContainer
-                } else MenuDefaults.containerColor
-                val textColor = if (isSelected) {
-                    MaterialTheme.colorScheme.onPrimaryContainer
-                } else MaterialTheme.colorScheme.onSurface
+                val backgroundColor =
+                    if (isSelected) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else MenuDefaults.containerColor
+                val textColor =
+                    if (isSelected) {
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    } else MaterialTheme.colorScheme.onSurface
 
                 DropdownMenuItem(
                     text = { Text(option.label) },
@@ -100,9 +101,7 @@ fun <ID> DropdownSelect(
                         onSelectedChange(option)
                         expanded = false
                     },
-                    modifier = Modifier
-                        .background(backgroundColor)
-                        .pointerHoverIcon(PointerIcon.Hand),
+                    modifier = Modifier.background(backgroundColor).pointerHoverIcon(PointerIcon.Hand),
                     colors = MenuDefaults.itemColors().copy(textColor = textColor),
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
@@ -119,7 +118,7 @@ fun DropdownSelectPreview() = AppPreview {
             0,
             listOf(Option(0, "Example")),
             {},
-            label = "Choice"
+            label = "Choice",
         )
     }
 }

@@ -13,7 +13,6 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.julianfortune.beanstock.ui.common.data.Dynamic
 import com.julianfortune.beanstock.ui.common.data.Option
 import com.julianfortune.beanstock.ui.common.input.AsyncAutocompleteSelect
 import com.julianfortune.beanstock.ui.common.input.AutocompleteSelect
@@ -24,7 +23,6 @@ import com.julianfortune.beanstock.ui.theme.AppPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import org.koin.compose.viewmodel.koinViewModel
-
 
 @Composable
 fun EntryForm(
@@ -65,7 +63,7 @@ fun EntryForm(
                 }
             }
         },
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -78,17 +76,17 @@ fun NewEntryFormUi(
     programOptions: List<Option<Long>> = emptyList(),
     accountOptions: List<Option<Long>> = emptyList(),
     eventHandler: (EntryFormEvent) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.padding(16.dp).fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
             text = state.title,
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         Column {
@@ -100,7 +98,7 @@ fun NewEntryFormUi(
                 getOptions = getItemOptions,
                 onCreateNew = onCreateNewItem,
                 label = { Text("Item") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
 
             Column {
@@ -116,7 +114,7 @@ fun NewEntryFormUi(
                     onSelectedChange = {
                         eventHandler(EntryFormEvent.ItemWeightSelected(it.id))
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
 
@@ -125,7 +123,7 @@ fun NewEntryFormUi(
             Text(
                 text = "Unit (e.g., Case)",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -138,9 +136,7 @@ fun NewEntryFormUi(
                             eventHandler(EntryFormEvent.ItemCountChanged(it))
                         },
                         label = { Text("Count") },
-                        modifier = Modifier
-                            .height(64.dp)
-                            .fillMaxWidth(),
+                        modifier = Modifier.height(64.dp).fillMaxWidth(),
                         singleLine = true,
                     )
                 }
@@ -148,7 +144,7 @@ fun NewEntryFormUi(
                 is UnitWeightState.LooseItems -> {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         OutlinedTextField(
                             value = state.unitWeight.unitWeightPounds,
@@ -156,9 +152,7 @@ fun NewEntryFormUi(
                                 eventHandler(EntryFormEvent.WeightPoundsChanged(it))
                             },
                             label = { Text("Lbs") },
-                            modifier = Modifier
-                                .height(64.dp)
-                                .weight(1f),
+                            modifier = Modifier.height(64.dp).weight(1f),
                             singleLine = true,
                         )
 
@@ -170,9 +164,7 @@ fun NewEntryFormUi(
                                 eventHandler(EntryFormEvent.WeightOuncesChanged(it))
                             },
                             label = { Text("Oz") },
-                            modifier = Modifier
-                                .height(64.dp)
-                                .weight(1f),
+                            modifier = Modifier.height(64.dp).weight(1f),
                             singleLine = true,
                         )
                     }
@@ -183,7 +175,7 @@ fun NewEntryFormUi(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 val noCostOption = Option(id = true, label = "No Cost")
                 val paidOption = Option(id = false, label = "Paid")
@@ -195,7 +187,7 @@ fun NewEntryFormUi(
                     onSelectedChange = { selection ->
                         eventHandler(EntryFormEvent.CostStatusChanged(selection.id))
                     },
-                    modifier = Modifier.weight(0.3f)
+                    modifier = Modifier.weight(0.3f),
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -210,7 +202,7 @@ fun NewEntryFormUi(
                         eventHandler(EntryFormEvent.UnitCostLostFocus)
                     },
                     enabled = !state.costStatusIsNoCost,
-                    modifier = Modifier.weight(0.7f)
+                    modifier = Modifier.weight(0.7f),
                 )
             }
 
@@ -219,7 +211,7 @@ fun NewEntryFormUi(
             Text(
                 text = "Quantity",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -230,9 +222,7 @@ fun NewEntryFormUi(
                     eventHandler(EntryFormEvent.UnitCountChanged(it))
                 },
                 label = { Text("Count") },
-                modifier = Modifier
-                    .height(64.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.height(64.dp).fillMaxWidth(),
                 singleLine = true,
             )
 
@@ -241,7 +231,7 @@ fun NewEntryFormUi(
             Text(
                 text = "Associations",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -253,7 +243,7 @@ fun NewEntryFormUi(
                     eventHandler(EntryFormEvent.ProgramSelected(it?.id))
                 },
                 label = { Text("Program") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -265,7 +255,7 @@ fun NewEntryFormUi(
                     eventHandler(EntryFormEvent.AccountSelected(it?.id))
                 },
                 label = { Text("Account") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -274,13 +264,13 @@ fun NewEntryFormUi(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 TextButton(
                     modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                     onClick = {
                         eventHandler(EntryFormEvent.AbortForm)
-                    }
+                    },
                 ) {
                     Text("Cancel")
                 }
@@ -306,9 +296,7 @@ fun NewEntryFormUi(
 fun EntryFormPreview() {
     AppPreview {
         Column(modifier = Modifier.padding(16.dp)) {
-            NewEntryFormUi(
-                state = EntryFormState(),
-            )
+            NewEntryFormUi(state = EntryFormState())
         }
     }
 }

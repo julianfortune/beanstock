@@ -23,7 +23,6 @@ import com.julianfortune.beanstock.ui.page.namedentity.data.EntityOperation
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemsPage(viewModel: ItemsPageViewModel = koinViewModel()) {
@@ -43,18 +42,19 @@ fun ItemsPage(viewModel: ItemsPageViewModel = koinViewModel()) {
             null,
             onClickCreateNew = {
                 viewModel.showNewItem()
-            }
+            },
         ) { item, modifier, elevation ->
             ListItem(
                 headlineContent = {
                     Text(item.name)
                 },
-                modifier = modifier.clickable(
-                    enabled = true,
-                    onClick = {
-                        viewModel.showEditItem(item)
-                    }
-                ),
+                modifier =
+                    modifier.clickable(
+                        enabled = true,
+                        onClick = {
+                            viewModel.showEditItem(item)
+                        },
+                    ),
                 tonalElevation = elevation,
                 trailingContent = {
                     EntityOptionsDropdownMenu(
@@ -65,7 +65,7 @@ fun ItemsPage(viewModel: ItemsPageViewModel = koinViewModel()) {
                             viewModel.showDeleteItem(item)
                         },
                     )
-                }
+                },
             )
         }
     }
@@ -94,11 +94,12 @@ fun ItemsPage(viewModel: ItemsPageViewModel = koinViewModel()) {
         modifier = Modifier.width(640.dp),
     ) { editOperation ->
         // TODO: Conversion in VM
-        val itemBody = ItemBody(
-            editOperation.entity.name,
-            editOperation.entity.categories.firstOrNull()?.id,
-            editOperation.entity.format,
-        )
+        val itemBody =
+            ItemBody(
+                editOperation.entity.name,
+                editOperation.entity.categories.firstOrNull()?.id,
+                editOperation.entity.format,
+            )
 
         ItemForm(
             categoryOptions,
@@ -116,9 +117,7 @@ fun ItemsPage(viewModel: ItemsPageViewModel = koinViewModel()) {
 
     // Delete modal
     if (itemOperation is EntityOperation.Delete) {
-        Dialog(
-            onDismissRequest = { viewModel.cancelItemOperation() }
-        ) {
+        Dialog(onDismissRequest = { viewModel.cancelItemOperation() }) {
             val itemId = (itemOperation as EntityOperation.Delete).id
             ConfirmDeleteEntityForm(
                 itemId,
@@ -131,7 +130,7 @@ fun ItemsPage(viewModel: ItemsPageViewModel = koinViewModel()) {
                         viewModel.deleteItem(itemId)
                         viewModel.dismissItemModal()
                     }
-                }
+                },
             )
         }
     }

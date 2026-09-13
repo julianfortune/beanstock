@@ -20,14 +20,11 @@ class GenericNamedEntityRepository<ROW : Any, ENTITY : NamedEntity>(
 ) : NamedEntityRepository<ENTITY> {
 
     override fun getAll(): Flow<List<ENTITY>> {
-        return getAllFn()
-            .asFlow()
-            .mapToList(Dispatchers.IO)
-            .map { rows ->
-                rows.map {
-                    fromRow(it)
-                }
+        return getAllFn().asFlow().mapToList(Dispatchers.IO).map { rows ->
+            rows.map {
+                fromRow(it)
             }
+        }
     }
 
     override fun getById(id: Long): Flow<ENTITY> {
@@ -46,26 +43,27 @@ class GenericNamedEntityRepository<ROW : Any, ENTITY : NamedEntity>(
 
     override suspend fun updateNameById(id: Long, name: String): Result<Long> {
         return Result.runCatching {
-            updateFn(name, id)
-        }.fold(
-            onSuccess = { rowsUpdated ->
-                if (rowsUpdated > 0) Result.success(id)
-                else Result.failure(IllegalStateException("$entityName with id=$id could not be updated"))
-            },
-            onFailure = { Result.failure(it) }
-        )
+                updateFn(name, id)
+            }
+            .fold(
+                onSuccess = { rowsUpdated ->
+                    if (rowsUpdated > 0) Result.success(id)
+                    else Result.failure(IllegalStateException("$entityName with id=$id could not be updated"))
+                },
+                onFailure = { Result.failure(it) },
+            )
     }
 
     override suspend fun deleteById(id: Long): Result<Long> {
         return Result.runCatching {
-            deleteFn(id)
-        }.fold(
-            onSuccess = { rowsDeleted ->
-                if (rowsDeleted > 0) Result.success(id)
-                else Result.failure(IllegalStateException("$entityName with id=$id could not be deleted"))
-            },
-            onFailure = { Result.failure(it) }
-        )
+                deleteFn(id)
+            }
+            .fold(
+                onSuccess = { rowsDeleted ->
+                    if (rowsDeleted > 0) Result.success(id)
+                    else Result.failure(IllegalStateException("$entityName with id=$id could not be deleted"))
+                },
+                onFailure = { Result.failure(it) },
+            )
     }
-
 }

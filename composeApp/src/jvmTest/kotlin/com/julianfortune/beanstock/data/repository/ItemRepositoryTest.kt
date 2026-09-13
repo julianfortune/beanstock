@@ -28,10 +28,11 @@ class ItemRepositoryTest {
         val result = itemRepository.getAll().first()
 
         // THEN
-        assertThat(result).containsExactlyInAnyOrder(
-            ItemHeadline(id1, "Apple"),
-            ItemHeadline(id2, "Banana")
-        )
+        assertThat(result)
+            .containsExactlyInAnyOrder(
+                ItemHeadline(id1, "Apple"),
+                ItemHeadline(id2, "Banana"),
+            )
     }
 
     @Test
@@ -77,11 +78,14 @@ class ItemRepositoryTest {
         val categoryId = database.categoryQueries.insert("Dairy").awaitAsOne()
 
         // WHEN
-        val id = itemRepository.insert(
-            "Butter",
-            setOf(categoryId),
-            Item.Format.Loose,
-        ).getOrThrow()
+        val id =
+            itemRepository
+                .insert(
+                    "Butter",
+                    setOf(categoryId),
+                    Item.Format.Loose,
+                )
+                .getOrThrow()
 
         // THEN
         val rows = database.itemQueries.getAllItems().awaitAsList()
@@ -105,12 +109,15 @@ class ItemRepositoryTest {
         val newCategoryId = database.categoryQueries.insert("Perishable").awaitAsOne()
 
         // WHEN
-        val id = itemRepository.update(
-            itemId,
-            "Margarine",
-            setOf(newCategoryId),
-            Item.Format.Packaged(setOf(Weight.ofImperial(1, 0f))),
-        ).getOrThrow()
+        val id =
+            itemRepository
+                .update(
+                    itemId,
+                    "Margarine",
+                    setOf(newCategoryId),
+                    Item.Format.Packaged(setOf(Weight.ofImperial(1, 0f))),
+                )
+                .getOrThrow()
 
         // THEN
         assertThat(id).isEqualTo(itemId)

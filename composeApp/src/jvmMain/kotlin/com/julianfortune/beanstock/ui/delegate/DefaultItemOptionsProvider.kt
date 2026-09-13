@@ -9,17 +9,18 @@ import kotlinx.coroutines.flow.stateIn
 
 class DefaultItemOptionsProvider(
     itemRepository: ItemRepository,
-    scope: CoroutineScope
+    scope: CoroutineScope,
 ) : ItemOptionsProvider {
 
-    override val itemOptions = itemRepository.getAll()
-        .map { items ->
-            items.map { Option(it.id, it.name) }
-        }
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = emptyList()
-        )
-
+    override val itemOptions =
+        itemRepository
+            .getAll()
+            .map { items ->
+                items.map { Option(it.id, it.name) }
+            }
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = emptyList(),
+            )
 }

@@ -9,15 +9,16 @@ import kotlinx.coroutines.flow.stateIn
 
 class DefaultProgramOptionsProvider(
     programRepository: NamedEntityRepository<Program>,
-    scope: CoroutineScope
+    scope: CoroutineScope,
 ) : ProgramOptionsProvider {
 
-    override val programOptions = programRepository.getAll()
-        .map { entities -> entities.map { it.toOption() } }
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = emptyList()
-        )
-
+    override val programOptions =
+        programRepository
+            .getAll()
+            .map { entities -> entities.map { it.toOption() } }
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = emptyList(),
+            )
 }

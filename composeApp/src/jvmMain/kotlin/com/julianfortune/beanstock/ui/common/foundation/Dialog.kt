@@ -16,13 +16,13 @@ fun Dialog(
 ) {
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Card(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            colors = CardDefaults.cardColors().copy(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-            ),
+            modifier = modifier.fillMaxWidth().padding(16.dp),
+            colors =
+                CardDefaults.cardColors()
+                    .copy(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                    ),
             shape = MaterialTheme.shapes.large,
         ) {
             content()

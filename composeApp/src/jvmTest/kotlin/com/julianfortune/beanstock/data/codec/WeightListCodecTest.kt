@@ -11,13 +11,14 @@ class WeightListCodecTest {
 
     @ParameterizedTest
     @CsvSource(
-        value = [
-            "[]        |     |",
-            "[100]     | 100 |",
-            "[0, 0]    |   0 | 0",
-            "[100, 20] | 100 | 20",
-        ],
-        delimiter = '|'
+        value =
+            [
+                "[]        |     |",
+                "[100]     | 100 |",
+                "[0, 0]    |   0 | 0",
+                "[100, 20] | 100 | 20",
+            ],
+        delimiter = '|',
     )
     fun deserializeSucceeds(input: String, firstExpected: Long?, secondExpected: Long?) {
         // GIVEN / WHEN
@@ -30,13 +31,14 @@ class WeightListCodecTest {
 
     @ParameterizedTest
     @CsvSource(
-        value = [
-            "[ ]",
-            "[, ]",
-            "-100, 20",
-            "[-100, 20]",
-        ],
-        delimiter = '|'
+        value =
+            [
+                "[ ]",
+                "[, ]",
+                "-100, 20",
+                "[-100, 20]",
+            ],
+        delimiter = '|',
     )
     fun deserializeFails(input: String) {
         // GIVEN / WHEN
@@ -49,13 +51,14 @@ class WeightListCodecTest {
 
     @ParameterizedTest
     @CsvSource(
-        value = [
-            "        |   |   | [] ",
-            "      1 |   |   | [1] ",
-            " 100000 |   |   | [100000] ",
-            "      1 | 2 | 3 | [1, 2, 3] ",
-        ],
-        delimiter = '|'
+        value =
+            [
+                "        |   |   | [] ",
+                "      1 |   |   | [1] ",
+                " 100000 |   |   | [100000] ",
+                "      1 | 2 | 3 | [1, 2, 3] ",
+            ],
+        delimiter = '|',
     )
     fun serialize(first: Long?, second: Long?, third: Long?, expected: String) {
         // GIVEN
@@ -67,5 +70,4 @@ class WeightListCodecTest {
         // THEN
         assertThat(result).isEqualTo(expected)
     }
-
 }
