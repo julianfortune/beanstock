@@ -3,10 +3,10 @@ package com.julianfortune.beanstock.data.repository
 import app.cash.sqldelight.async.coroutines.awaitAsList
 import app.cash.sqldelight.async.coroutines.awaitAsOneOrNull
 import com.julianfortune.beanstock.createTestDatabase
+import com.julianfortune.beanstock.db.Supplier as DbSupplier
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import com.julianfortune.beanstock.db.Supplier as DbSupplier
 
 class SupplierRepositoryTest {
 
@@ -55,5 +55,4 @@ class SupplierRepositoryTest {
         val row = database.supplierQueries.getById(id).awaitAsOneOrNull()
         assertThat(row).isNull()
     }
-
 }

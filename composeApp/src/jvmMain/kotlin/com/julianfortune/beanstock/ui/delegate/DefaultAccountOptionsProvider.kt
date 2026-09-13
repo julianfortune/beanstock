@@ -9,15 +9,16 @@ import kotlinx.coroutines.flow.stateIn
 
 class DefaultAccountOptionsProvider(
     accountRepository: NamedEntityRepository<Account>,
-    scope: CoroutineScope
+    scope: CoroutineScope,
 ) : AccountOptionsProvider {
 
-    override val accountOptions = accountRepository.getAll()
-        .map { entities -> entities.map { it.toOption() } }
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = emptyList()
-        )
-
+    override val accountOptions =
+        accountRepository
+            .getAll()
+            .map { entities -> entities.map { it.toOption() } }
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = emptyList(),
+            )
 }

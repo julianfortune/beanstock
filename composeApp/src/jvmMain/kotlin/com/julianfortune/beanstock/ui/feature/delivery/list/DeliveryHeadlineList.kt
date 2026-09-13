@@ -14,12 +14,9 @@ import com.julianfortune.beanstock.ui.common.layout.Collection
 import com.julianfortune.beanstock.ui.feature.delivery.form.DeliveryForm
 import org.koin.compose.viewmodel.koinViewModel
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeliveryHeadlineList(
-    viewModel: DeliveryHeadlineListViewModel = koinViewModel(),
-) {
+fun DeliveryHeadlineList(viewModel: DeliveryHeadlineListViewModel = koinViewModel()) {
     val selectedId by viewModel.selectedId.collectAsState(null)
 
     val deliveryHeadlines by viewModel.allDeliveries.collectAsState(emptyList())
@@ -58,25 +55,24 @@ fun DeliveryHeadlineList(
                     supportingContent = {
                         Text(c.supplier.name)
                     },
-                    modifier = modifier.clickable(
-                        enabled = true,
-                        onClick = {
-                            viewModel.onSelect(c.id)
-                        }
-                    ),
+                    modifier =
+                        modifier.clickable(
+                            enabled = true,
+                            onClick = {
+                                viewModel.onSelect(c.id)
+                            },
+                        ),
                     tonalElevation = elevation,
                 )
             }
         },
         onClickCreateNew = {
             creationDialogIsOpen = true
-        }
+        },
     )
 
     if (creationDialogIsOpen) {
-        Dialog(
-            onDismissRequest = { creationDialogIsOpen = false },
-        ) {
+        Dialog(onDismissRequest = { creationDialogIsOpen = false }) {
             DeliveryForm(
                 title = "New Delivery",
                 supplierOptions = supplierOptions,
@@ -87,9 +83,8 @@ fun DeliveryHeadlineList(
                 onSubmit = { newDelivery ->
                     viewModel.saveNewDelivery(newDelivery)
                 },
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
             )
         }
     }
-
 }

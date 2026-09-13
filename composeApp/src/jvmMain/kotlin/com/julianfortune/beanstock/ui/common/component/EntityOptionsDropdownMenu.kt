@@ -20,7 +20,7 @@ fun EntityOptionsDropdownMenu(
             onClick = {
                 edit()
                 dismiss()
-            }
+            },
         )
         DropdownMenuItem(
             text = { Text("Delete") },
@@ -28,7 +28,7 @@ fun EntityOptionsDropdownMenu(
             onClick = {
                 delete()
                 dismiss()
-            }
+            },
         )
     }
 }

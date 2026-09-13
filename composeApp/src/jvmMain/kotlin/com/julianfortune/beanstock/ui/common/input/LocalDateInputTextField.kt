@@ -26,21 +26,21 @@ sealed interface LocalDateInput {
             return Valid(today.format(FORMATTER), today)
         }
 
-        fun fromInput(input: String): LocalDateInput = when (val result = parseDateSafe(input)) {
-            null -> Invalid(input)
-            else -> Valid(input, result)
-        }
+        fun fromInput(input: String): LocalDateInput =
+            when (val result = parseDateSafe(input)) {
+                null -> Invalid(input)
+                else -> Valid(input, result)
+            }
     }
 
     data class Valid(override val value: String, val parsed: LocalDate) : LocalDateInput
 
-    @JvmInline
-    value class Invalid(override val value: String) : LocalDateInput
+    @JvmInline value class Invalid(override val value: String) : LocalDateInput
 }
 
-val FORMATTER: DateTimeFormatter = DateTimeFormatter
-    .ofPattern("MM/dd/uuuu")
-    .withResolverStyle(ResolverStyle.STRICT) // Rejects invalid dates like Feb 30
+val FORMATTER: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("MM/dd/uuuu")
+        .withResolverStyle(ResolverStyle.STRICT) // Rejects invalid dates like Feb 30
 
 fun parseDateSafe(input: String): LocalDate? {
     if (input.isBlank()) return null
@@ -65,14 +65,15 @@ fun LocalDateInputTextField(
             onValueChange(LocalDateInput.fromInput(newValue))
         },
         label = label,
-        modifier = modifier
-            .height(86.dp)
-            .onFocusChanged({ state ->
-                if (!state.isFocused) {
-                    // Check for error / format / etc.
-                    onFocusLost()
-                }
-            }),
+        modifier =
+            modifier
+                .height(86.dp)
+                .onFocusChanged({ state ->
+                    if (!state.isFocused) {
+                        // Check for error / format / etc.
+                        onFocusLost()
+                    }
+                }),
         singleLine = true,
         isError = isError,
         colors = OutlinedTextFieldDefaults.colors(),

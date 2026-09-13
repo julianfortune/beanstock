@@ -15,14 +15,14 @@ fun ConfirmDeleteEntityForm(
     id: Long,
     text: String,
     onCancel: () -> Unit,
-    onConfirm: (id: Long) -> Unit
+    onConfirm: (id: Long) -> Unit,
 ) {
     ConfirmDeleteEntityForm(
         text,
         onCancel,
         onConfirm = {
             onConfirm(id)
-        }
+        },
     )
 }
 
@@ -30,28 +30,28 @@ fun ConfirmDeleteEntityForm(
 fun ConfirmDeleteEntityForm(
     text: String,
     onCancel: () -> Unit,
-    onConfirm: () -> Unit
+    onConfirm: () -> Unit,
 ) {
     Column(
         modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         // Action Buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             TextButton(
                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
-                onClick = onCancel
+                onClick = onCancel,
             ) {
                 Text("Cancel")
             }
@@ -60,10 +60,12 @@ fun ConfirmDeleteEntityForm(
 
             Button(
                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
-                colors = ButtonDefaults.filledTonalButtonColors().copy(
-                    containerColor = MaterialTheme.colorScheme.error,
-                    contentColor = MaterialTheme.colorScheme.onError,
-                ),
+                colors =
+                    ButtonDefaults.filledTonalButtonColors()
+                        .copy(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.onError,
+                        ),
                 onClick = onConfirm,
             ) {
                 Text("Delete")

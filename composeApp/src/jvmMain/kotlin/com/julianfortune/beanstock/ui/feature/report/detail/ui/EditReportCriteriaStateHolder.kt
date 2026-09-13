@@ -18,7 +18,8 @@ class EditReportCriteriaStateHolder(initialValues: ReportCriteriaBody) {
     private var itemIdInput by mutableStateOf<Long?>(initialValues.itemId)
     private var categoryIdInput by mutableStateOf<Long?>(initialValues.categoryId)
 
-    private var costStatusIsNoCost by mutableStateOf<Boolean?>(initialValues.costStatus?.let { it == CostStatus.NO_COST })
+    private var costStatusIsNoCost by
+        mutableStateOf<Boolean?>(initialValues.costStatus?.let { it == CostStatus.NO_COST })
 
     private var programIdInput by mutableStateOf<Long?>(initialValues.programId)
     private var accountIdInput by mutableStateOf<Long?>(initialValues.accountId)

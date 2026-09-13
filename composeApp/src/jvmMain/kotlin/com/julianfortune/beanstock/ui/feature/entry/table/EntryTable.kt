@@ -41,9 +41,7 @@ private val horizontalTextPadding = 16.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntryTable(
-    viewModel: EntryTableViewModel = koinViewModel(),
-) {
+fun EntryTable(viewModel: EntryTableViewModel = koinViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
 
     val programOptions by viewModel.programOptions.collectAsState(emptyList())
@@ -81,7 +79,7 @@ fun EntryTable(
                             viewModel.saveEntry(entry)
                             viewModel.cancelEntryOperation()
                         },
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(16.dp),
                     )
                 }
             }
@@ -100,16 +98,14 @@ fun EntryTable(
                             viewModel.updateEntry(editAction.id, newEntry)
                             viewModel.cancelEntryOperation()
                         },
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(16.dp),
                     )
                 }
             }
 
             when (val action = state.action) {
                 is EntryAction.Delete -> {
-                    Dialog(
-                        onDismissRequest = { viewModel.cancelEntryOperation() },
-                    ) {
+                    Dialog(onDismissRequest = { viewModel.cancelEntryOperation() }) {
                         ConfirmDeleteEntityForm(
                             action.id,
                             "Delete Entry",
@@ -119,7 +115,7 @@ fun EntryTable(
                             onConfirm = { id ->
                                 viewModel.deleteEntryById(id)
                                 viewModel.cancelEntryOperation()
-                            }
+                            },
                         )
                     }
                 }
@@ -146,21 +142,16 @@ fun EntryTableUi(
     onClickBulkUpdateAccount: (accountId: Long?) -> Unit = {},
     onClickClearEntrySelection: () -> Unit = {},
 ) {
-    Column(
-        modifier = Modifier
-            .padding(horizontal = horizontalContentPadding)
-    ) {
+    Column(modifier = Modifier.padding(horizontal = horizontalContentPadding)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
         ) {
             Text(
                 text = "Entries",
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = horizontalTextPadding)
+                modifier = Modifier.weight(1f).padding(horizontal = horizontalTextPadding),
             )
 
             val actionRowHeight = 48.dp
@@ -172,7 +163,7 @@ fun EntryTableUi(
                             modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                             onClick = {
                                 onClickEnableSelection()
-                            }
+                            },
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Checklist,
@@ -190,7 +181,7 @@ fun EntryTableUi(
                         Spacer(Modifier.width(16.dp))
                         Text(
                             "${selectionState.count} selected",
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                         )
                         Spacer(Modifier.width(16.dp))
 
@@ -216,24 +207,24 @@ fun EntryTableUi(
                             }
                         }
 
-//                        IconButton(
-//                            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
-//                            onClick = {
-//
-//                            }
-//                        ) {
-//                            Icon(
-//                                imageVector = Icons.Outlined.Delete,
-//                                contentDescription = "Delete entries",
-//                            )
-//                        }
+                        //                        IconButton(
+                        //                            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
+                        //                            onClick = {
+                        //
+                        //                            }
+                        //                        ) {
+                        //                            Icon(
+                        //                                imageVector = Icons.Outlined.Delete,
+                        //                                contentDescription = "Delete entries",
+                        //                            )
+                        //                        }
 
                         IconButton(
                             modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
                             onClick = {
                                 onClickClearEntrySelection()
                                 onClickDisableSelection()
-                            }
+                            },
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
@@ -257,16 +248,12 @@ fun EntryTableUi(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Header row
-        EntryRow(
-            modifier = Modifier.fillMaxWidth().height(32.dp),
-        ) {
+        EntryRow(modifier = Modifier.fillMaxWidth().height(32.dp)) {
             val selectAllState = (state.selection as? SelectionState.Enabled)?.selectAll ?: ToggleableState.Off
 
             SelectionCell(state.selection is SelectionState.Enabled) {
                 TriStateCheckbox(
-                    modifier = Modifier
-                        .size(28.dp)
-                        .pointerHoverIcon(PointerIcon.Hand),
+                    modifier = Modifier.size(28.dp).pointerHoverIcon(PointerIcon.Hand),
                     state = selectAllState,
                     onClick = {
                         onClickToggleAllEntries()
@@ -279,27 +266,19 @@ fun EntryTableUi(
             UnitCountCell { EntryRowHeaderText("Count") }
             EntryWeightCell { EntryRowHeaderText("Weight") }
             EntryCostCell { EntryRowHeaderText("Cost") }
-            ActionCell { }
+            ActionCell {}
         }
 
         HorizontalDivider(
             color = MaterialTheme.colorScheme.outlineVariant,
-            thickness = 1.dp
+            thickness = 1.dp,
         )
 
         state.rows.forEach { entryRow ->
-            EntryRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        vertical = 12.dp,
-                    ),
-            ) {
+            EntryRow(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp)) {
                 SelectionCell(state.selection is SelectionState.Enabled) {
                     Checkbox(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .pointerHoverIcon(PointerIcon.Hand),
+                        modifier = Modifier.size(28.dp).pointerHoverIcon(PointerIcon.Hand),
                         checked = entryRow.isSelected,
                         onCheckedChange = {
                             onClickToggleEntry(it, entryRow.entryId)
@@ -331,46 +310,40 @@ fun EntryTableUi(
                 ActionCell {
                     EntityOptionsDropdownMenu(
                         edit = { onClickEditEntry(entryRow.entryId) },
-                        delete = { onClickDeleteEntry(entryRow.entryId) }
+                        delete = { onClickDeleteEntry(entryRow.entryId) },
                     )
                 }
             }
             HorizontalDivider(
                 color = MaterialTheme.colorScheme.outlineVariant,
-                thickness = 1.dp
+                thickness = 1.dp,
             )
         }
 
         Column(
-            modifier = Modifier
-                .pointerHoverIcon(PointerIcon.Hand)
-                .clickable { onClickAddEntry() },
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.pointerHoverIcon(PointerIcon.Hand).clickable { onClickAddEntry() },
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 "New",
                 Modifier.padding(vertical = 16.dp),
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
             )
             HorizontalDivider(
                 color = MaterialTheme.colorScheme.outlineVariant,
-                thickness = 1.dp
+                thickness = 1.dp,
             )
         }
 
         // Footer
         EntryRow(
             verticalAlignment = Alignment.Top,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    vertical = 12.dp,
-                ),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
         ) {
             SelectionCell(state.selection is SelectionState.Enabled) {}
-            ItemNameCell { }
-            ProgramCell { }
-            PurchasingAccountCell { }
+            ItemNameCell {}
+            ProgramCell {}
+            PurchasingAccountCell {}
             UnitCountCell {
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
@@ -416,7 +389,7 @@ fun EntryTableUi(
                     }
                 }
             }
-            ActionCell { }
+            ActionCell {}
         }
     }
 }
@@ -449,7 +422,6 @@ fun BulkEditProgramDropdownButton(
     }
 }
 
-
 @Composable
 fun BulkEditAccountDropdownButton(
     enabled: Boolean = true,
@@ -474,15 +446,13 @@ fun BulkEditLinkedProperty(
     title: String,
     label: String,
     options: List<Option<Long>>,
-    onSubmit: (newProgramId: Long?) -> Unit
+    onSubmit: (newProgramId: Long?) -> Unit,
 ) {
     var selectedId by remember { mutableStateOf<Long?>(null) }
 
     Column(
-        modifier = Modifier
-            .width(320.dp)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = Modifier.width(320.dp).padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(title)
 
@@ -504,7 +474,7 @@ fun BulkEditLinkedProperty(
                 onClick = {
                     onSubmit(selectedId)
                 },
-                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
             ) {
                 Text("Save")
             }
@@ -519,10 +489,9 @@ fun BulkEditLinkedPropertyPreview() = AppPreview {
         "Edit Program",
         "Program",
         listOf(Option(1L, "Placeholder")),
-        {}
+        {},
     )
 }
-
 
 // TODO: This should live in common.foundation / common.component (and maybe be multiple)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -531,7 +500,7 @@ fun SelectionModifierMenu(
     icon: @Composable () -> Unit,
     tooltipText: String,
     enabled: Boolean = true,
-    content: @Composable (dismiss: () -> Unit) -> Unit
+    content: @Composable (dismiss: () -> Unit) -> Unit,
 ) {
     var programPopoverOpen by remember { mutableStateOf(false) }
 
@@ -541,12 +510,12 @@ fun SelectionModifierMenu(
             tooltip = {
                 PlainTooltip { Text(tooltipText) }
             },
-            state = rememberTooltipState()
+            state = rememberTooltipState(),
         ) {
             IconButton(
                 onClick = { programPopoverOpen = !programPopoverOpen },
                 enabled = enabled,
-                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand)
+                modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
             ) {
                 icon()
             }
@@ -559,13 +528,13 @@ fun SelectionModifierMenu(
                     alignment = Alignment.TopCenter,
                     // Dismisses the popup when clicking outside
                     onDismissRequest = { programPopoverOpen = false },
-                    properties = PopupProperties(focusable = true)
+                    properties = PopupProperties(focusable = true),
                 ) {
                     Row(modifier = Modifier.padding(horizontal = 16.dp)) {
                         OutlinedCard(
-                            colors = CardDefaults.cardColors().copy(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-                            )
+                            colors =
+                                CardDefaults.cardColors()
+                                    .copy(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
                         ) {
                             content { programPopoverOpen = false }
                         }

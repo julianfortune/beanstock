@@ -17,7 +17,7 @@ import com.julianfortune.beanstock.ui.theme.AppPreview
 fun EntryRow(
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
     modifier: Modifier = Modifier,
-    content: @Composable EntryRowScope.() -> Unit
+    content: @Composable EntryRowScope.() -> Unit,
 ) {
     Row(
         modifier = modifier,

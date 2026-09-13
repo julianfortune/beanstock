@@ -27,7 +27,6 @@ import com.julianfortune.beanstock.ui.common.input.data.ComboBoxState
 import com.julianfortune.beanstock.ui.common.input.data.ComboBoxUiEvent
 import com.julianfortune.beanstock.ui.theme.AppPreview
 
-
 object ComboBoxDefaults {
     object Text {
         const val PROMPT = "Type to search..."
@@ -38,8 +37,8 @@ object ComboBoxDefaults {
 /**
  * Combo Box
  *
- * A general-purpose composable for filtering and selecting
- * Heavily inspired by: https://mui.com/material-ui/react-autocomplete/
+ * A general-purpose composable for filtering and selecting Heavily inspired by:
+ * https://mui.com/material-ui/react-autocomplete/
  */
 @Composable
 fun <ID> ComboBox(
@@ -75,7 +74,7 @@ fun <ID> ComboBox(
         state = stateHolder.uiState,
         eventHandler = stateHolder::eventHandler,
         label = label,
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -95,7 +94,6 @@ fun <ID> ComboBoxUi(
             // state using focus, user edits, and onDismissRequest
         },
     ) {
-
         OutlinedTextField(
             state = state.textFieldState,
             label = { label?.invoke() },
@@ -108,51 +106,52 @@ fun <ID> ComboBoxUi(
                         CircularProgressIndicator(
                             modifier = Modifier.size(20.dp),
                             strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.primary
+                            color = MaterialTheme.colorScheme.primary,
                         )
                     }
 
-                    ComboBoxIcon.CLEAR -> IconButton(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .pointerHoverIcon(PointerIcon.Hand)
-                            .focusProperties { canFocus = false },
-                        onClick = {
-                            eventHandler(ComboBoxUiEvent.ClearSelection)
+                    ComboBoxIcon.CLEAR ->
+                        IconButton(
+                            modifier =
+                                Modifier.size(28.dp).pointerHoverIcon(PointerIcon.Hand).focusProperties {
+                                    canFocus = false
+                                },
+                            onClick = {
+                                eventHandler(ComboBoxUiEvent.ClearSelection)
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Clear,
+                                contentDescription = "Clear selection",
+                            )
                         }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Clear,
-                            contentDescription = "Clear selection"
-                        )
-                    }
 
-                    ComboBoxIcon.CARET -> IconButton(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .pointerHoverIcon(PointerIcon.Hand)
-                            .focusProperties { canFocus = false },
-                        onClick = {
-                            // Clicking on the button when expanded already invokes `onDismissRequest` so we only need
-                            // to fire an event when expanding the dropdown menu
-                            if (!state.expanded) {
-                                eventHandler(ComboBoxUiEvent.ToggleClicked)
-                            }
+                    ComboBoxIcon.CARET ->
+                        IconButton(
+                            modifier =
+                                Modifier.size(28.dp).pointerHoverIcon(PointerIcon.Hand).focusProperties {
+                                    canFocus = false
+                                },
+                            onClick = {
+                                // Clicking on the button when expanded already invokes `onDismissRequest` so we only
+                                // need
+                                // to fire an event when expanding the dropdown menu
+                                if (!state.expanded) {
+                                    eventHandler(ComboBoxUiEvent.ToggleClicked)
+                                }
+                            },
+                        ) {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = state.expanded)
                         }
-                    ) {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = state.expanded)
-                    }
-
                 }
             },
-            modifier = modifier
-                .height(64.dp)
-                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable)
-                .onFocusChanged {
-                    val event = when {
-                        it.hasFocus || it.isFocused -> ComboBoxUiEvent.Focused
-                        else -> ComboBoxUiEvent.Unfocused
-                    }
+            modifier =
+                modifier.height(64.dp).menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable).onFocusChanged {
+                    val event =
+                        when {
+                            it.hasFocus || it.isFocused -> ComboBoxUiEvent.Focused
+                            else -> ComboBoxUiEvent.Unfocused
+                        }
                     eventHandler(event)
                 },
         )
@@ -178,9 +177,10 @@ fun <ID> ComboBoxUi(
 
                             when {
                                 currentQuery == "" -> NoOptionsMenuItemV2(ComboBoxDefaults.Text.PROMPT)
-                                else -> CreateNewMenuItem("Create '${currentQuery}'") {
-                                    eventHandler(ComboBoxUiEvent.CreateNew(state.textFieldState.text.toString()))
-                                }
+                                else ->
+                                    CreateNewMenuItem("Create '${currentQuery}'") {
+                                        eventHandler(ComboBoxUiEvent.CreateNew(state.textFieldState.text.toString()))
+                                    }
                             }
                         }
 
@@ -188,32 +188,31 @@ fun <ID> ComboBoxUi(
                     }
                 }
 
-                else -> state.options.value.forEach { option ->
-                    val isSelected = option.id == (state.selection as? Dynamic.Present)?.value?.id
+                else ->
+                    state.options.value.forEach { option ->
+                        val isSelected = option.id == (state.selection as? Dynamic.Present)?.value?.id
 
-                    val backgroundColor = if (isSelected) {
-                        MaterialTheme.colorScheme.primaryContainer
-                    } else MaterialTheme.colorScheme.surfaceContainerHigh
-                    val textColor = if (isSelected) {
-                        MaterialTheme.colorScheme.onPrimaryContainer
-                    } else MaterialTheme.colorScheme.onSurface
+                        val backgroundColor =
+                            if (isSelected) {
+                                MaterialTheme.colorScheme.primaryContainer
+                            } else MaterialTheme.colorScheme.surfaceContainerHigh
+                        val textColor =
+                            if (isSelected) {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            } else MaterialTheme.colorScheme.onSurface
 
-                    DropdownMenuItem(
-                        text = {
-                            Text(option.label)
-                        },
-                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                        modifier = Modifier
-                            .background(backgroundColor)
-                            .pointerHoverIcon(PointerIcon.Hand),
-                        colors = MenuDefaults.itemColors().copy(textColor = textColor),
-                        onClick = {
-                            eventHandler(
-                                ComboBoxUiEvent.UpdateSelection(option)
-                            )
-                        },
-                    )
-                }
+                        DropdownMenuItem(
+                            text = {
+                                Text(option.label)
+                            },
+                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                            modifier = Modifier.background(backgroundColor).pointerHoverIcon(PointerIcon.Hand),
+                            colors = MenuDefaults.itemColors().copy(textColor = textColor),
+                            onClick = {
+                                eventHandler(ComboBoxUiEvent.UpdateSelection(option))
+                            },
+                        )
+                    }
             }
         }
     }
@@ -249,7 +248,7 @@ fun NoOptionsMenuItemV2(text: String) {
 fun DefaultPreview() = AppPreview {
     ComboBoxUi(
         ComboBoxState<Long>(),
-        label = { Text("Status") }
+        label = { Text("Status") },
     )
 }
 
@@ -262,6 +261,6 @@ fun PrefilledPreview() = AppPreview {
             textFieldState = TextFieldState("Apple"),
             selection = Dynamic.Present(Option(0L, "Apple")),
         ),
-        label = { Text("Fruit") }
+        label = { Text("Fruit") },
     )
 }

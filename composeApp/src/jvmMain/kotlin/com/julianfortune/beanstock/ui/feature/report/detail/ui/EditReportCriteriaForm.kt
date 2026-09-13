@@ -1,6 +1,5 @@
 package com.julianfortune.beanstock.ui.feature.report.detail.ui
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -34,7 +33,7 @@ fun EditReportCriteriaForm(
     supplierOptions: List<Option<Long>> = emptyList(),
     onCancel: () -> Unit = {},
     onSubmit: (newReport: ReportCriteriaBody) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val stateHolder = remember {
         EditReportCriteriaStateHolder(initialValues)
@@ -86,22 +85,22 @@ fun EditReportCriteriaFormUi(
     onSupplierIdChange: (supplierId: Long?) -> Unit = {},
     onCancel: () -> Unit = {},
     onSubmit: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             text = "Edit Criteria",
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             LocalDateInputTextField(
                 value = state.startDate.value,
@@ -129,7 +128,7 @@ fun EditReportCriteriaFormUi(
             options = itemOptions,
             onSelectedChange = { onItemIdChange(it?.id) },
             label = { Text("Item") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         AutocompleteSelect(
@@ -137,14 +136,15 @@ fun EditReportCriteriaFormUi(
             options = categoryOptions,
             onSelectedChange = { onCategoryIdChange(it?.id) },
             label = { Text("Category") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
-        val costStatusOptions = listOf(
-            Option<Boolean?>(id = null, label = "Any"),
-            Option<Boolean?>(id = false, label = "Paid"),
-            Option<Boolean?>(id = true, label = "No Cost"),
-        )
+        val costStatusOptions =
+            listOf(
+                Option<Boolean?>(id = null, label = "Any"),
+                Option<Boolean?>(id = false, label = "Paid"),
+                Option<Boolean?>(id = true, label = "No Cost"),
+            )
 
         DropdownSelect(
             label = "Cost Status",
@@ -153,7 +153,7 @@ fun EditReportCriteriaFormUi(
             onSelectedChange = { isNoCost ->
                 onCostStatusChange(isNoCost.id)
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         AutocompleteSelect(
@@ -161,7 +161,7 @@ fun EditReportCriteriaFormUi(
             options = programOptions,
             onSelectedChange = { onProgramIdChange(it?.id) },
             label = { Text("Program") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         AutocompleteSelect(
@@ -169,7 +169,7 @@ fun EditReportCriteriaFormUi(
             options = purchasingAccountOptions,
             onSelectedChange = { onPurchasingAccountIdChange(it?.id) },
             label = { Text("Account") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         AutocompleteSelect(
@@ -177,14 +177,14 @@ fun EditReportCriteriaFormUi(
             options = supplierOptions,
             onSelectedChange = { onSupplierIdChange(it?.id) },
             label = { Text("Supplier") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         // Action Buttons
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             TextButton(
                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),

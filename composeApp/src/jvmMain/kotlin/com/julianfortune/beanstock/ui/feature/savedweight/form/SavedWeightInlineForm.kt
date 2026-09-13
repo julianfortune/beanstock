@@ -20,11 +20,8 @@ import com.julianfortune.beanstock.ui.feature.savedweight.form.data.SavedWeightB
 import com.julianfortune.beanstock.ui.feature.savedweight.form.data.SavedWeightFormState
 import com.julianfortune.beanstock.ui.theme.AppPreview
 
-
 @Composable
-fun SavedWeightInlineForm(
-    onSubmit: (SavedWeightBody) -> Unit = {}
-) {
+fun SavedWeightInlineForm(onSubmit: (SavedWeightBody) -> Unit = {}) {
     val stateHolder = remember {
         SavedWeightStateHolder()
     }
@@ -45,17 +42,17 @@ fun SavedWeightInlineFormUi(
     state: SavedWeightFormState,
     onPoundsValueChange: (String) -> Unit = {},
     onOuncesValueChange: (String) -> Unit = {},
-    onSubmit: () -> Unit = {}
+    onSubmit: () -> Unit = {},
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         CompactOutlinedTextField(
             value = state.lbs.value,
             onValueChange = onPoundsValueChange,
             units = "lb",
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -64,7 +61,7 @@ fun SavedWeightInlineFormUi(
             value = state.oz.value,
             onValueChange = onOuncesValueChange,
             units = "oz",
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -85,7 +82,7 @@ fun SavedWeightInlineFormPreview() = AppPreview {
     SavedWeightInlineFormUi(
         SavedWeightFormState(
             FormFieldState("80"),
-            FormFieldState("zzz", isError = true)
+            FormFieldState("zzz", isError = true),
         )
     )
 }

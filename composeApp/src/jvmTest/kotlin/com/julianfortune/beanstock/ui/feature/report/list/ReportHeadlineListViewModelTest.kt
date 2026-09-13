@@ -20,10 +20,11 @@ class ReportHeadlineListViewModelTest {
     fun setUp() {
         every { mockReportRepository.getAllAsHeadlines() } returns flowOf(emptyList())
 
-        viewModel = ReportHeadlineListViewModel(
-            mockReportRepository,
-            mockReportViewCoordinator,
-        )
+        viewModel =
+            ReportHeadlineListViewModel(
+                mockReportRepository,
+                mockReportViewCoordinator,
+            )
     }
 
     @Test
@@ -34,5 +35,4 @@ class ReportHeadlineListViewModelTest {
         // THEN
         verify(exactly = 1) { mockReportViewCoordinator.view(1) }
     }
-
 }

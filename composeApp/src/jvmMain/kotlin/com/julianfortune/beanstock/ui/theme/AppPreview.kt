@@ -19,7 +19,7 @@ fun AppPreview(
     ) {
         Surface(
             modifier = modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
+            color = MaterialTheme.colorScheme.background,
         ) {
             content()
         }

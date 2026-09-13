@@ -9,15 +9,16 @@ import kotlinx.coroutines.flow.stateIn
 
 class DefaultSupplierOptionsProvider(
     supplierRepository: NamedEntityRepository<Supplier>,
-    scope: CoroutineScope
+    scope: CoroutineScope,
 ) : SupplierOptionsProvider {
 
-    override val supplierOptions = supplierRepository.getAll()
-        .map { entities -> entities.map { it.toOption() } }
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = emptyList()
-        )
-
+    override val supplierOptions =
+        supplierRepository
+            .getAll()
+            .map { entities -> entities.map { it.toOption() } }
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = emptyList(),
+            )
 }

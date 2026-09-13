@@ -22,7 +22,6 @@ import com.julianfortune.beanstock.data.common.Entity
 import com.julianfortune.beanstock.ui.common.component.TopBar
 import com.julianfortune.beanstock.ui.theme.dynamicScrollbarStyle
 
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun <T : Entity> Collection(
@@ -33,13 +32,11 @@ fun <T : Entity> Collection(
     content: @Composable (T, Modifier, Dp) -> Unit,
 ) {
     Column {
-        Surface(
-            color = MaterialTheme.colorScheme.surface,
-        ) {
+        Surface(color = MaterialTheme.colorScheme.surface) {
             TopBar(title) {
                 Row(
                     horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     onClickCreateNew?.let { onClick ->
                         // TODO: `.height(32.dp)` would be better, but causes the text to become un-centered
@@ -54,14 +51,12 @@ fun <T : Entity> Collection(
             }
         }
 
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             if (entities.isEmpty()) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text("Empty collection.")
                 }
@@ -82,12 +77,9 @@ fun <T : Entity> Collection(
                 }
 
                 VerticalScrollbar(
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .fillMaxHeight()
-                        .padding(2.dp),
+                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight().padding(2.dp),
                     adapter = rememberScrollbarAdapter(listScrollState),
-                    style = dynamicScrollbarStyle(MaterialTheme.colorScheme.onBackground)
+                    style = dynamicScrollbarStyle(MaterialTheme.colorScheme.onBackground),
                 )
             }
         }

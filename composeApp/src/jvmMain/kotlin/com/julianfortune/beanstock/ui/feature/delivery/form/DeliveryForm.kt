@@ -21,7 +21,6 @@ import com.julianfortune.beanstock.ui.feature.delivery.form.data.DeliveryBody
 import com.julianfortune.beanstock.ui.feature.delivery.form.data.DeliveryFormState
 import com.julianfortune.beanstock.ui.theme.AppPreview
 
-
 @Composable
 fun DeliveryForm(
     title: String,
@@ -29,14 +28,13 @@ fun DeliveryForm(
     initialDelivery: DeliveryBody?,
     onCancel: () -> Unit,
     onSubmit: (delivery: DeliveryBody) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     // TODO: Add / replace with a ViewModel
-    val stateHolder = remember(initialDelivery) {
-        DeliveryFormStateHolder(
-            initialDelivery
-        )
-    }
+    val stateHolder =
+        remember(initialDelivery) {
+            DeliveryFormStateHolder(initialDelivery)
+        }
 
     DeliveryFormUi(
         title = title,
@@ -51,7 +49,7 @@ fun DeliveryForm(
             // `onSubmit` should only be invoked when `validData` is defined
             stateHolder.validData?.let { onSubmit(it) }
         },
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -68,17 +66,17 @@ fun DeliveryFormUi(
     onTaxesChange: (CurrencyInput) -> Unit = {},
     onCancel: () -> Unit = {},
     onSubmit: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             text = title,
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         // Date Received Field
@@ -97,12 +95,12 @@ fun DeliveryFormUi(
             options = supplierOptions,
             onSelectedChange = { onSupplierIdChange(it?.id) },
             label = { Text("Supplier*") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // Fees Field
             CurrencyInputTextField(
@@ -127,7 +125,7 @@ fun DeliveryFormUi(
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             TextButton(
                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
@@ -164,7 +162,6 @@ fun DeliveryFormPreview() {
         }
     }
 }
-
 
 @Preview
 @Composable

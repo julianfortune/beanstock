@@ -5,9 +5,7 @@ import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Result
 import dev.forkhandles.result4k.Success
 
-
-object CostStatusCodec :
-    Codec<CostStatus> {
+object CostStatusCodec : Codec<CostStatus> {
 
     override fun deserialize(value: String): Result<CostStatus, CodecError> {
         return when (value) {

@@ -13,7 +13,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.julianfortune.beanstock.ui.common.component.TopBar
 import com.julianfortune.beanstock.ui.theme.AppPreview
 
-
 @Composable
 fun DeliveryDetailTopBar(
     title: String,
@@ -24,17 +23,16 @@ fun DeliveryDetailTopBar(
         Row {
             IconButton(
                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
-                onClick = onClickDelete
+                onClick = onClickDelete,
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Delete,
-                    contentDescription = "Delete delivery"
+                    contentDescription = "Delete delivery",
                 )
             }
         }
     }
 }
-
 
 @Preview
 @Composable

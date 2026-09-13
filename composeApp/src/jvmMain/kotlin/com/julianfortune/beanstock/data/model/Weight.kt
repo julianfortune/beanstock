@@ -64,10 +64,8 @@ data class Weight(val centigrams: Long) {
     // TODO(P3): Refactor this to have a different return type that won't compromise on precision
     fun toPounds(): Float {
         val totalOzHundredths = centigrams.toBigDecimal() / GRAMS_PER_OZ.toBigDecimal()
-        val poundsHundredths = totalOzHundredths
-            .divide(OZ_PER_POUND.toBigDecimal())
-            .setScale(0, RoundingMode.HALF_EVEN)
-            .toFloat()
+        val poundsHundredths =
+            totalOzHundredths.divide(OZ_PER_POUND.toBigDecimal()).setScale(0, RoundingMode.HALF_EVEN).toFloat()
 
         return poundsHundredths / 100
     }

@@ -15,12 +15,14 @@ open class NamedEntityPageViewModel<T : NamedEntity>(private val repository: Nam
     private val _operation = mutableStateOf<EntityOperation<T>?>(null)
     val operation: State<EntityOperation<T>?> = _operation
 
-    val allEntities = repository.getAll()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = emptyList()
-        )
+    val allEntities =
+        repository
+            .getAll()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = emptyList(),
+            )
 
     suspend fun save(name: String) {
         repository.insert(name = name)

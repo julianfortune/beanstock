@@ -71,12 +71,10 @@ fun App() {
         val contextMenuRepresentation = DarkDefaultContextMenuRepresentation // LightDefaultContextMenuRepresentation
         CompositionLocalProvider(LocalContextMenuRepresentation provides contextMenuRepresentation) {
             Row {
-                NavigationRail(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                ) {
+                NavigationRail(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                     Column(
                         modifier = Modifier.padding(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         Spacer(modifier = Modifier.height(8.dp))
                         NavigationPage.entries.forEach { page ->
@@ -94,44 +92,49 @@ fun App() {
                                     Text(
                                         page.title,
                                         style = MaterialTheme.typography.labelMedium,
-                                        modifier = Modifier.padding(top = 4.dp)
+                                        modifier = Modifier.padding(top = 4.dp),
                                     )
-                                })
+                                },
+                            )
                         }
                     }
                 }
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     when (selectedNavigationItem) {
-                        NavigationPage.CATEGORIES -> NamedEntityPage<Category>(
-                            koinViewModel(named("categoryViewModel")),
-                            "Categories",
-                            "Category"
-                        )
+                        NavigationPage.CATEGORIES ->
+                            NamedEntityPage<Category>(
+                                koinViewModel(named("categoryViewModel")),
+                                "Categories",
+                                "Category",
+                            )
 
                         NavigationPage.DELIVERIES -> DeliveriesPage()
 
                         NavigationPage.ITEMS -> ItemsPage()
 
-                        NavigationPage.PROGRAMS -> NamedEntityPage<com.julianfortune.beanstock.data.model.Program>(
-                            koinViewModel(named("programViewModel")),
-                            "Programs",
-                            "Program"
-                        )
+                        NavigationPage.PROGRAMS ->
+                            NamedEntityPage<com.julianfortune.beanstock.data.model.Program>(
+                                koinViewModel(named("programViewModel")),
+                                "Programs",
+                                "Program",
+                            )
 
-                        NavigationPage.PURCHASING_ACCOUNTS -> NamedEntityPage<com.julianfortune.beanstock.data.model.Account>(
-                            koinViewModel(named("purchasingAccountViewModel")),
-                            "Accounts",
-                            "Account"
-                        )
+                        NavigationPage.PURCHASING_ACCOUNTS ->
+                            NamedEntityPage<com.julianfortune.beanstock.data.model.Account>(
+                                koinViewModel(named("purchasingAccountViewModel")),
+                                "Accounts",
+                                "Account",
+                            )
 
-                        NavigationPage.SUPPLIERS -> NamedEntityPage<com.julianfortune.beanstock.data.model.Supplier>(
-                            koinViewModel(named("supplierViewModel")),
-                            "Suppliers",
-                            "Supplier"
-                        )
+                        NavigationPage.SUPPLIERS ->
+                            NamedEntityPage<com.julianfortune.beanstock.data.model.Supplier>(
+                                koinViewModel(named("supplierViewModel")),
+                                "Suppliers",
+                                "Supplier",
+                            )
 
                         NavigationPage.REPORTS -> ReportsPage()
                     }

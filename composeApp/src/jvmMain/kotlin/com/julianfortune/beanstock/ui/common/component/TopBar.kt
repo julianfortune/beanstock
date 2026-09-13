@@ -1,6 +1,5 @@
 package com.julianfortune.beanstock.ui.common.component
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
@@ -13,7 +12,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.julianfortune.beanstock.ui.theme.AppPreview
 
-
 @Composable
 fun TopBar(
     title: String,
@@ -24,13 +22,13 @@ fun TopBar(
         Row(
             modifier = Modifier.height(68.dp).padding(horizontal = 16.dp).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             SelectionContainer {
                 Text(
                     title,
                     style = MaterialTheme.typography.titleMedium,
-                    color = LocalContentColor.current
+                    color = LocalContentColor.current,
                 )
             }
 
@@ -53,7 +51,7 @@ fun TopBarPreview() {
                         Icon(Icons.Outlined.QuestionMark, "Example")
                     }
                 }
-            }
+            },
         )
     }
 }

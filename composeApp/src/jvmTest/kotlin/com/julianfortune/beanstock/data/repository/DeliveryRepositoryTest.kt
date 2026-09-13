@@ -5,6 +5,8 @@ import com.julianfortune.beanstock.createTestDatabase
 import com.julianfortune.beanstock.data.codec.LocalDateCodec
 import com.julianfortune.beanstock.data.model.*
 import com.julianfortune.beanstock.db.Database
+import java.time.LocalDate
+import kotlin.properties.Delegates
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -13,8 +15,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import java.time.LocalDate
-import kotlin.properties.Delegates
 
 class DeliveryRepositoryTest {
 
@@ -38,12 +38,13 @@ class DeliveryRepositoryTest {
 
     @ParameterizedTest
     @CsvSource(
-        value = [
-            " , ",
-            " , 500",
-            "500 , ",
-            "500 , 500",
-        ]
+        value =
+            [
+                " , ",
+                " , 500",
+                "500 , ",
+                "500 , 500",
+            ]
     )
     fun insertDelivery(taxesCents: Long?, feesCents: Long?) {
         // GIVEN
@@ -54,12 +55,14 @@ class DeliveryRepositoryTest {
 
         // WHEN
         val id = runBlocking {
-            repository.insertDelivery(
-                received,
-                supplierId,
-                taxesCents,
-                feesCents,
-            ).getOrThrow()
+            repository
+                .insertDelivery(
+                    received,
+                    supplierId,
+                    taxesCents,
+                    feesCents,
+                )
+                .getOrThrow()
         }
 
         // THEN
@@ -86,12 +89,14 @@ class DeliveryRepositoryTest {
             val received = LocalDate.of(2025, 10, 26)
 
             deliveryId = runBlocking {
-                repository.insertDelivery(
-                    received,
-                    initialSupplierId,
-                    null,
-                    null,
-                ).getOrThrow()
+                repository
+                    .insertDelivery(
+                        received,
+                        initialSupplierId,
+                        null,
+                        null,
+                    )
+                    .getOrThrow()
             }
         }
 
@@ -106,17 +111,17 @@ class DeliveryRepositoryTest {
             println(result)
 
             assertThat(result).isNotNull()
-
         }
 
         @ParameterizedTest
         @CsvSource(
-            value = [
-                " , ",
-                " , 500",
-                "500 , ",
-                "500 , 500",
-            ]
+            value =
+                [
+                    " , ",
+                    " , 500",
+                    "500 , ",
+                    "500 , 500",
+                ]
         )
         fun updateDelivery(taxesCents: Long?, feesCents: Long?) {
             // GIVEN
@@ -127,13 +132,15 @@ class DeliveryRepositoryTest {
 
             // WHEN
             val id = runBlocking {
-                repository.updateDelivery(
-                    deliveryId,
-                    received,
-                    supplierId,
-                    taxesCents,
-                    feesCents,
-                ).getOrThrow()
+                repository
+                    .updateDelivery(
+                        deliveryId,
+                        received,
+                        supplierId,
+                        taxesCents,
+                        feesCents,
+                    )
+                    .getOrThrow()
             }
 
             // THEN
@@ -158,10 +165,11 @@ class DeliveryRepositoryTest {
 
         @ParameterizedTest
         @CsvSource(
-            value = [
-                "3, 6700, 'PURCHASED', 800, , , , ",
-                "3, 6700, 'NO_COST', 0, , , , ",
-            ],
+            value =
+                [
+                    "3, 6700, 'PURCHASED', 800, , , , ",
+                    "3, 6700, 'NO_COST', 0, , , , ",
+                ]
         )
         fun insertDeliveryEntry(
             unitCount: Long,
@@ -171,7 +179,7 @@ class DeliveryRepositoryTest {
             itemWeightCentigrams: Long?,
             itemsPerUnit: Long?,
             programId: Long?,
-            purchasingAccountId: Long?
+            purchasingAccountId: Long?,
         ) {
             // GIVEN
             val itemId = runBlocking {
@@ -185,18 +193,20 @@ class DeliveryRepositoryTest {
 
             // WHEN
             val entryId = runBlocking {
-                repository.appendDeliveryEntry(
-                    deliveryId = deliveryId,
-                    itemId = itemId,
-                    unitCount = unitCount,
-                    unitWeight = expectedUnitWeight,
-                    costStatus = costStatus,
-                    unitCostCents = unitCostCents,
-                    itemWeight = expectedItemWeight,
-                    itemsPerUnit = itemsPerUnit,
-                    programId = programId,
-                    purchasingAccountId = purchasingAccountId
-                ).getOrThrow()
+                repository
+                    .appendDeliveryEntry(
+                        deliveryId = deliveryId,
+                        itemId = itemId,
+                        unitCount = unitCount,
+                        unitWeight = expectedUnitWeight,
+                        costStatus = costStatus,
+                        unitCostCents = unitCostCents,
+                        itemWeight = expectedItemWeight,
+                        itemsPerUnit = itemsPerUnit,
+                        programId = programId,
+                        purchasingAccountId = purchasingAccountId,
+                    )
+                    .getOrThrow()
             }
 
             // THEN
@@ -240,18 +250,20 @@ class DeliveryRepositoryTest {
                 }
 
                 entryId = runBlocking {
-                    repository.appendDeliveryEntry(
-                        deliveryId = deliveryId,
-                        itemId = initialItemId,
-                        unitCount = 1,
-                        unitWeight = Weight(1000),
-                        costStatus = CostStatus.PURCHASED,
-                        unitCostCents = 100,
-                        itemWeight = null,
-                        itemsPerUnit = null,
-                        programId = initialProgramId,
-                        purchasingAccountId = initialPurchasingAccountId
-                    ).getOrThrow()
+                    repository
+                        .appendDeliveryEntry(
+                            deliveryId = deliveryId,
+                            itemId = initialItemId,
+                            unitCount = 1,
+                            unitWeight = Weight(1000),
+                            costStatus = CostStatus.PURCHASED,
+                            unitCostCents = 100,
+                            itemWeight = null,
+                            itemsPerUnit = null,
+                            programId = initialProgramId,
+                            purchasingAccountId = initialPurchasingAccountId,
+                        )
+                        .getOrThrow()
                 }
             }
 
@@ -267,20 +279,22 @@ class DeliveryRepositoryTest {
 
                 assertThat(firstEntry.item).isEqualTo(ItemHeadline(initialItemId, initialItemName))
                 assertThat(firstEntry.program).isEqualTo(Program(initialProgramId, initialProgramName))
-                assertThat(firstEntry.account).isEqualTo(
-                    Account(
-                        initialPurchasingAccountId,
-                        initialPurchasingAccountName
+                assertThat(firstEntry.account)
+                    .isEqualTo(
+                        Account(
+                            initialPurchasingAccountId,
+                            initialPurchasingAccountName,
+                        )
                     )
-                )
             }
 
             @ParameterizedTest
             @CsvSource(
-                value = [
-                    "5, 12000, 'NO_COST', 0",
-                    "10, 500, 'PURCHASED', 850",
-                ],
+                value =
+                    [
+                        "5, 12000, 'NO_COST', 0",
+                        "10, 500, 'PURCHASED', 850",
+                    ]
             )
             fun updateDeliveryEntry(
                 unitCount: Long,
@@ -297,18 +311,20 @@ class DeliveryRepositoryTest {
 
                 // WHEN
                 val id = runBlocking {
-                    repository.updateDeliveryEntry(
-                        entryId = entryId,
-                        itemId = newItemId,
-                        unitCount = unitCount,
-                        unitWeight = expectedUnitWeight,
-                        costStatus = costStatus,
-                        unitCostCents = unitCostCents,
-                        itemWeight = null,
-                        itemsPerUnit = null,
-                        programId = null,
-                        purchasingAccountId = null
-                    ).getOrThrow()
+                    repository
+                        .updateDeliveryEntry(
+                            entryId = entryId,
+                            itemId = newItemId,
+                            unitCount = unitCount,
+                            unitWeight = expectedUnitWeight,
+                            costStatus = costStatus,
+                            unitCostCents = unitCostCents,
+                            itemWeight = null,
+                            itemsPerUnit = null,
+                            programId = null,
+                            purchasingAccountId = null,
+                        )
+                        .getOrThrow()
                 }
 
                 // THEN
@@ -337,5 +353,4 @@ class DeliveryRepositoryTest {
             }
         }
     }
-
 }

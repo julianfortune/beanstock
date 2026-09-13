@@ -28,9 +28,7 @@ import org.koin.compose.viewmodel.koinViewModel
 private val contentMaxWidth = 960.dp
 
 @Composable
-fun DeliveryDetail(
-    viewModel: DeliveryDetailViewModel = koinViewModel(),
-) {
+fun DeliveryDetail(viewModel: DeliveryDetailViewModel = koinViewModel()) {
     val state by viewModel.uiState.collectAsState()
 
     // TODO(!!): Turn these into rich state objects with error information
@@ -42,12 +40,13 @@ fun DeliveryDetail(
         when (val current = state) {
             is DeliveryDetailState.Empty -> TopBar("")
             is DeliveryDetailState.Loading -> TopBar("Loading")
-            is DeliveryDetailState.Success -> DeliveryDetailTopBar(
-                current.title,
-                onClickDelete = {
-                    viewModel.showDeleteDelivery()
-                }
-            )
+            is DeliveryDetailState.Success ->
+                DeliveryDetailTopBar(
+                    current.title,
+                    onClickDelete = {
+                        viewModel.showDeleteDelivery()
+                    },
+                )
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -55,14 +54,12 @@ fun DeliveryDetail(
 
             Row(
                 modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.Center,
             ) {
                 Column(
-                    modifier = Modifier
-                        .widthIn(max = contentMaxWidth)
-                        .verticalScroll(scrollState)
-                        .padding(vertical = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                    modifier =
+                        Modifier.widthIn(max = contentMaxWidth).verticalScroll(scrollState).padding(vertical = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(24.dp),
                 ) {
                     (state as? DeliveryDetailState.Success)?.content?.let { contentState ->
                         DeliveryHeader(
@@ -88,17 +85,13 @@ fun DeliveryDetail(
                             )
                         }
                     }
-
                 }
             }
 
             VerticalScrollbar(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .fillMaxHeight()
-                    .padding(2.dp),
+                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight().padding(2.dp),
                 adapter = rememberScrollbarAdapter(scrollState),
-                style = dynamicScrollbarStyle(MaterialTheme.colorScheme.onBackground)
+                style = dynamicScrollbarStyle(MaterialTheme.colorScheme.onBackground),
             )
         }
     }
@@ -106,9 +99,7 @@ fun DeliveryDetail(
     deliveryAction?.let { action ->
         when (action) {
             is DeliveryAction.Edit -> {
-                Dialog(
-                    onDismissRequest = { viewModel.cancelDeliveryOperation() },
-                ) {
+                Dialog(onDismissRequest = { viewModel.cancelDeliveryOperation() }) {
                     DeliveryForm(
                         title = "Edit Delivery",
                         supplierOptions = supplierOptions,
@@ -120,15 +111,13 @@ fun DeliveryDetail(
                             viewModel.updateDelivery(action.id, newDelivery)
                             viewModel.cancelDeliveryOperation()
                         },
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(16.dp),
                     )
                 }
             }
 
             is DeliveryAction.Delete -> {
-                Dialog(
-                    onDismissRequest = { viewModel.cancelDeliveryOperation() },
-                ) {
+                Dialog(onDismissRequest = { viewModel.cancelDeliveryOperation() }) {
                     ConfirmDeleteEntityForm(
                         action.id,
                         "Delete Delivery",
@@ -138,7 +127,7 @@ fun DeliveryDetail(
                         onConfirm = { id ->
                             viewModel.deleteDelivery(id)
                             viewModel.cancelDeliveryOperation()
-                        }
+                        },
                     )
                 }
             }

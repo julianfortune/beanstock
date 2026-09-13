@@ -23,35 +23,38 @@ value class CurrencyInput private constructor(val value: String) {
             return CurrencyInput(formatCents(cents))
         }
 
-        fun fromString(value: String): CurrencyInput? = when {
-            value == "" -> CurrencyInput("")
-            DECIMAL_REGEX.matches(value) -> CurrencyInput(value)
-            else -> null
-        }
+        fun fromString(value: String): CurrencyInput? =
+            when {
+                value == "" -> CurrencyInput("")
+                DECIMAL_REGEX.matches(value) -> CurrencyInput(value)
+                else -> null
+            }
     }
 
     private fun numberInputToLong(number: String?): Long {
         return when (number) {
-            null, "" -> 0L
+            null,
+            "" -> 0L
             else -> number.toLong()
         }
     }
 
-    fun toLong() = when (value) {
-        "" -> null
-        "." -> 0L
-        else -> {
-            // We know the value matches `decimalRegex` otherwise it could not be `CurrencyInput`
-            val parts = value.split('.')
+    fun toLong() =
+        when (value) {
+            "" -> null
+            "." -> 0L
+            else -> {
+                // We know the value matches `decimalRegex` otherwise it could not be `CurrencyInput`
+                val parts = value.split('.')
 
-            val dollars = numberInputToLong(parts.getOrNull(0))
+                val dollars = numberInputToLong(parts.getOrNull(0))
 
-            val centsInput = parts.getOrNull(1) // Cents can be `X` or `XX`
-            val cents = numberInputToLong(if (centsInput?.length == 1) "${centsInput}0" else centsInput)
+                val centsInput = parts.getOrNull(1) // Cents can be `X` or `XX`
+                val cents = numberInputToLong(if (centsInput?.length == 1) "${centsInput}0" else centsInput)
 
-            dollars * 100 + cents
+                dollars * 100 + cents
+            }
         }
-    }
 
     fun toSimplifiedForm() = toLong()?.let { fromLong(it) } // Strip any leading zeroes
 }
@@ -71,21 +74,22 @@ fun CurrencyInputTextField(
         placeholder = { Text("0.00") },
         onValueChange = { newValue -> CurrencyInput.fromString(newValue)?.let { onValueChange(it) } },
         label = label,
-        modifier = modifier
-            .height(64.dp)
-            .onFocusChanged({ state ->
-                if (!state.isFocused) {
-                    // Check for error / format / etc.
-                    onFocusLost()
-                }
-            }),
+        modifier =
+            modifier
+                .height(64.dp)
+                .onFocusChanged({ state ->
+                    if (!state.isFocused) {
+                        // Check for error / format / etc.
+                        onFocusLost()
+                    }
+                }),
         // For i18n probably want to achieve this via `visualTransformation` property instead
         // (see https://developer.android.com/develop/ui/compose/quick-guides/content/auto-format-phone-number)
         prefix = {
             Icon(
                 imageVector = Icons.Filled.AttachMoney,
                 contentDescription = "US dollars",
-                modifier = Modifier.height(20.dp)
+                modifier = Modifier.height(20.dp),
             )
         },
         singleLine = true,

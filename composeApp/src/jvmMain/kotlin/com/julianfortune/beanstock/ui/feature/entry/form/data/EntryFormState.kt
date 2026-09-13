@@ -3,7 +3,6 @@ package com.julianfortune.beanstock.ui.feature.entry.form.data
 import com.julianfortune.beanstock.ui.common.data.Dynamic
 import com.julianfortune.beanstock.ui.common.data.Option
 
-
 data class EntryFormState(
     val title: String = "New Entry",
     val submissionText: String = "Create",
@@ -19,13 +18,12 @@ data class EntryFormState(
     val isValid: Boolean = false,
 )
 
-
 sealed interface ItemWeightOptionsState {
     data object Loading : ItemWeightOptionsState
+
     data object Disabled : ItemWeightOptionsState
-    data class Enabled(
-        val options: List<Option<Int>> = emptyList(),
-    ) : ItemWeightOptionsState
+
+    data class Enabled(val options: List<Option<Int>> = emptyList()) : ItemWeightOptionsState
 }
 
 sealed interface UnitWeightState {

@@ -22,7 +22,7 @@ import com.julianfortune.beanstock.ui.theme.AppPreview
 fun CreateReportForm(
     onCancel: () -> Unit,
     onSubmit: (newReport: CreateReportBody) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val stateHolder = remember {
         CreateReportFormStateHolder()
@@ -54,31 +54,31 @@ fun CreateReportFormUi(
     onEndDateFocusLost: () -> Unit = {},
     onCancel: () -> Unit = {},
     onSubmit: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             text = "Create Report",
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         OutlinedTextField(
             value = state.name.value,
             onValueChange = onNameChange,
             label = { Text("Name *") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-                .onFocusChanged({ state ->
-                    if (!state.isFocused) {
-                        // Check for error
-                    }
-                }),
+            modifier =
+                Modifier.fillMaxWidth()
+                    .height(64.dp)
+                    .onFocusChanged({ state ->
+                        if (!state.isFocused) {
+                            // Check for error
+                        }
+                    }),
             singleLine = true,
             isError = state.name.isError,
             colors = OutlinedTextFieldDefaults.colors(),
@@ -86,7 +86,7 @@ fun CreateReportFormUi(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             LocalDateInputTextField(
                 value = state.startDate.value,
@@ -113,7 +113,7 @@ fun CreateReportFormUi(
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             TextButton(
                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),

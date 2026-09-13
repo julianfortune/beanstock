@@ -5,12 +5,10 @@ import com.julianfortune.beanstock.ui.common.data.Dynamic
 import com.julianfortune.beanstock.ui.common.data.Option
 import com.julianfortune.beanstock.ui.common.input.ComboBoxDefaults
 
-
 enum class ComboBoxIcon {
     CARET,
     LOADING,
     CLEAR,
-    ;
 }
 
 data class ComboBoxState<ID>(

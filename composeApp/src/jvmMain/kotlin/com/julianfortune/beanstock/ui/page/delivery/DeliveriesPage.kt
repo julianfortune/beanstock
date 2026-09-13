@@ -7,7 +7,6 @@ import com.julianfortune.beanstock.ui.common.layout.ListDetailScaffold
 import com.julianfortune.beanstock.ui.feature.delivery.detail.DeliveryDetail
 import com.julianfortune.beanstock.ui.feature.delivery.list.DeliveryHeadlineList
 
-
 @Composable
 fun DeliveriesPage() {
     ListDetailScaffold(

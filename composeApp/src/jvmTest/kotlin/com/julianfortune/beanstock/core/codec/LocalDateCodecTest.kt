@@ -4,10 +4,10 @@ import com.julianfortune.beanstock.core.util.unwrapUnsafe
 import com.julianfortune.beanstock.data.codec.LocalDateCodec
 import dev.forkhandles.result4k.Failure
 import dev.forkhandles.result4k.Success
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import java.time.LocalDate
 
 class LocalDateCodecTest {
 

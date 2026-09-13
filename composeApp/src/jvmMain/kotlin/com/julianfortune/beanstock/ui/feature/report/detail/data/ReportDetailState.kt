@@ -16,7 +16,6 @@ sealed interface ReportDetailState {
         val editName: String? = null,
         val editCriteria: ReportCriteriaBody? = null,
     ) : ReportDetailState
-
 }
 
 data class ReportCriteriaState(

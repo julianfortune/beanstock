@@ -3,12 +3,10 @@ package com.julianfortune.beanstock.ui.feature.report.detail.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocalShipping
-import androidx.compose.material.icons.filled.Money
 import androidx.compose.material.icons.filled.Scale
 import androidx.compose.material.icons.outlined.CreditCard
 import androidx.compose.material.icons.outlined.Gavel
 import androidx.compose.material.icons.outlined.LocalShipping
-import androidx.compose.material.icons.outlined.Money
 import androidx.compose.material.icons.outlined.Summarize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,7 +20,6 @@ import com.julianfortune.beanstock.ui.common.component.KeyValueList
 import com.julianfortune.beanstock.ui.feature.report.detail.data.ReportResultState
 import com.julianfortune.beanstock.ui.theme.AppPreview
 
-
 @Composable
 fun ReportResultSection(
     state: ReportResultState,
@@ -32,19 +29,17 @@ fun ReportResultSection(
         Text(
             text = "Summary",
             style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier.padding(vertical = 8.dp),
         )
 
         Spacer(Modifier.height(12.dp))
 
-        KeyValueList(
-            modifier = Modifier.widthIn(max = 360.dp)
-        ) {
+        KeyValueList(modifier = Modifier.widthIn(max = 360.dp)) {
             KeyValueItem(
                 Icons.Default.Scale,
                 "Total Weight",
                 state.totalWeight,
-                FontFamily.Monospace
+                FontFamily.Monospace,
             )
             KeyValueItem(
                 Icons.Outlined.Summarize,
@@ -57,23 +52,22 @@ fun ReportResultSection(
                 Icons.Default.LocalShipping,
                 "Deliveries",
                 "${state.deliveryCount}",
-                FontFamily.Monospace
+                FontFamily.Monospace,
             )
             KeyValueItem(
                 Icons.Outlined.Gavel,
                 "Taxes",
                 state.totalTaxes,
                 FontFamily.Monospace,
-                hint = "The taxes accrued across all deliveries (${state.deliveryCount})"
+                hint = "The taxes accrued across all deliveries (${state.deliveryCount})",
             )
             KeyValueItem(
                 Icons.Outlined.CreditCard,
                 "Fees",
                 state.totalFees,
                 FontFamily.Monospace,
-                hint = "The fees accrued across all deliveries (${state.deliveryCount})"
+                hint = "The fees accrued across all deliveries (${state.deliveryCount})",
             )
-
         }
     }
 }
@@ -88,7 +82,7 @@ fun ReportResultSectionPreview() = AppPreview {
             "80.0",
             "$120.00",
             "$0.00",
-            "$0.00"
+            "$0.00",
         )
     )
 }

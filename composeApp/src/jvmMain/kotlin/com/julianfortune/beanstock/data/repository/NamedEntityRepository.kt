@@ -7,10 +7,14 @@ import kotlinx.coroutines.flow.Flow
 interface NamedEntityRepository<ENTITY : NamedEntity> {
 
     fun getAll(): Flow<List<ENTITY>>
-    fun getById(id: Long): Flow<ENTITY>
-    fun searchByName(query: String): Flow<List<ENTITY>>
-    suspend fun insert(name: String): Result<Long>
-    suspend fun updateNameById(id: Long, name: String): Result<Long>
-    suspend fun deleteById(id: Long): Result<Long>
 
+    fun getById(id: Long): Flow<ENTITY>
+
+    fun searchByName(query: String): Flow<List<ENTITY>>
+
+    suspend fun insert(name: String): Result<Long>
+
+    suspend fun updateNameById(id: Long, name: String): Result<Long>
+
+    suspend fun deleteById(id: Long): Result<Long>
 }

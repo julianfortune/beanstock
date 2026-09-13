@@ -18,18 +18,19 @@ import kotlinx.coroutines.launch
 class ItemsPageViewModel(
     private val itemRepository: ItemRepository,
     categoryOptionsProvider: CategoryOptionsProvider,
-) : ViewModel(),
-    CategoryOptionsProvider by categoryOptionsProvider {
+) : ViewModel(), CategoryOptionsProvider by categoryOptionsProvider {
 
     private val _itemOperation = mutableStateOf<EntityOperation<Item>?>(null)
     val itemOperation: State<EntityOperation<Item>?> = _itemOperation
 
-    val items = itemRepository.getAll()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
-            initialValue = emptyList()
-        )
+    val items =
+        itemRepository
+            .getAll()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = emptyList(),
+            )
 
     suspend fun saveItem(body: ItemBody) {
         itemRepository.insert(

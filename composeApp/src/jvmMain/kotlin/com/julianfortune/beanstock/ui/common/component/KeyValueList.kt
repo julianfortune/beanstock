@@ -22,13 +22,12 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import com.julianfortune.beanstock.ui.theme.AppPreview
 
-
 @Composable
 fun KeyValueList(
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(12.dp),
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
         verticalArrangement = verticalArrangement,
@@ -57,14 +56,14 @@ fun KeyValueItem(
             icon,
             key,
             modifier = Modifier.height(14.dp),
-            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
         )
 
         Spacer(Modifier.width(6.dp))
 
         Text(
             key,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f)
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
         )
 
         hint?.let {
@@ -91,10 +90,7 @@ fun KeyHint(hint: String) {
     Column {
         IconButton(
             onClick = { popoverIsOpen = !popoverIsOpen },
-            modifier = Modifier
-                .height(16.dp)
-                .width(16.dp)
-                .pointerHoverIcon(PointerIcon.Hand),
+            modifier = Modifier.height(16.dp).width(16.dp).pointerHoverIcon(PointerIcon.Hand),
         ) {
             Icon(Icons.Outlined.Info, "Info")
         }
@@ -106,19 +102,19 @@ fun KeyHint(hint: String) {
                     alignment = Alignment.TopCenter,
                     // Dismisses the popup when clicking outside
                     onDismissRequest = { popoverIsOpen = false },
-                    properties = PopupProperties(focusable = true)
+                    properties = PopupProperties(focusable = true),
                 ) {
                     Row(modifier = Modifier.padding(horizontal = 16.dp)) {
                         OutlinedCard(
-                            colors = CardDefaults.cardColors().copy(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-                            ),
-                            modifier = Modifier.widthIn(max = 400.dp)
+                            colors =
+                                CardDefaults.cardColors()
+                                    .copy(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                            modifier = Modifier.widthIn(max = 400.dp),
                         ) {
                             Text(
                                 hint,
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(16.dp)
+                                modifier = Modifier.padding(16.dp),
                             )
                         }
                     }
@@ -132,9 +128,7 @@ fun KeyHint(hint: String) {
 @Composable
 fun KeyValueListPreview() {
     AppPreview {
-        KeyValueList(
-            modifier = Modifier.padding(32.dp)
-        ) {
+        KeyValueList(modifier = Modifier.padding(32.dp)) {
             KeyValueItem(Icons.Outlined.Storefront, "Supplier", "ABC Foods")
             KeyValueItem(Icons.Outlined.Gavel, "Taxes", "$10.00", FontFamily.Monospace, "Testing")
             KeyValueItem(Icons.Outlined.CreditCard, "Fees", "$15.00", FontFamily.Monospace)

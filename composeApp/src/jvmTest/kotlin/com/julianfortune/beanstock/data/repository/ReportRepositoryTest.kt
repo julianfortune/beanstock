@@ -3,6 +3,8 @@ package com.julianfortune.beanstock.data.repository
 import app.cash.sqldelight.async.coroutines.awaitAsOne
 import com.julianfortune.beanstock.createTestDatabase
 import com.julianfortune.beanstock.data.model.CostStatus
+import java.time.LocalDate
+import kotlin.properties.Delegates.notNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
@@ -13,9 +15,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
-import java.time.LocalDate
-import kotlin.properties.Delegates.notNull
-
 
 class ReportRepositoryTest {
 
@@ -35,14 +34,15 @@ class ReportRepositoryTest {
 
     @ParameterizedTest
     @CsvSource(
-        value = [
-            "true,  true,  true,  true,  true,  true ", // All present
-            "true,  true,  false, true,   true,  true", // Most present
-            "false, true,  false, false,  true,  true", // Some present
-            "true,  false, false, false, false, false", // Item only
-            "false, false, false, false, false, true ", // Supplier only
-            "false, false, false, false, false, false", // All nulls
-        ]
+        value =
+            [
+                "true,  true,  true,  true,  true,  true ", // All present
+                "true,  true,  false, true,   true,  true", // Most present
+                "false, true,  false, false,  true,  true", // Some present
+                "true,  false, false, false, false, false", // Item only
+                "false, false, false, false, false, true ", // Supplier only
+                "false, false, false, false, false, false", // All nulls
+            ]
     )
     fun insertBasicReport(
         hasItem: Boolean,
@@ -50,48 +50,55 @@ class ReportRepositoryTest {
         hasCostStatus: Boolean,
         hasProgram: Boolean,
         hasAccount: Boolean,
-        hasSupplier: Boolean
+        hasSupplier: Boolean,
     ) {
         // GIVEN
         val start = LocalDate.of(2026, 1, 1)
         val end = LocalDate.of(2026, 3, 31)
         val name = "Q1 2026 Report"
 
-        val itemId = if (hasItem) {
-            runBlocking { database.itemQueries.insert("Test Item", null).awaitAsOne() }
-        } else null
+        val itemId =
+            if (hasItem) {
+                runBlocking { database.itemQueries.insert("Test Item", null).awaitAsOne() }
+            } else null
 
-        val itemCategoryId = if (hasCategory) {
-            runBlocking { database.categoryQueries.insert("Test Category").awaitAsOne() }
-        } else null
+        val itemCategoryId =
+            if (hasCategory) {
+                runBlocking { database.categoryQueries.insert("Test Category").awaitAsOne() }
+            } else null
 
         val costStatus = if (hasCostStatus) CostStatus.PURCHASED else null
 
-        val programId = if (hasProgram) {
-            runBlocking { database.programQueries.insert("Test Program").awaitAsOne() }
-        } else null
+        val programId =
+            if (hasProgram) {
+                runBlocking { database.programQueries.insert("Test Program").awaitAsOne() }
+            } else null
 
-        val purchasingAccountId = if (hasAccount) {
-            runBlocking { database.purchasingAccountQueries.insert("Test Account").awaitAsOne() }
-        } else null
+        val purchasingAccountId =
+            if (hasAccount) {
+                runBlocking { database.purchasingAccountQueries.insert("Test Account").awaitAsOne() }
+            } else null
 
-        val supplierId = if (hasSupplier) {
-            runBlocking { database.supplierQueries.insert("Test Supplier").awaitAsOne() }
-        } else null
+        val supplierId =
+            if (hasSupplier) {
+                runBlocking { database.supplierQueries.insert("Test Supplier").awaitAsOne() }
+            } else null
 
         // WHEN
         val id = runBlocking {
-            reportRepository.insert(
-                name = name,
-                start = start,
-                end = end,
-                itemId = itemId,
-                itemCategoryId = itemCategoryId,
-                costStatus = costStatus,
-                programId = programId,
-                purchasingAccountId = purchasingAccountId,
-                supplierId = supplierId
-            ).getOrThrow()
+            reportRepository
+                .insert(
+                    name = name,
+                    start = start,
+                    end = end,
+                    itemId = itemId,
+                    itemCategoryId = itemCategoryId,
+                    costStatus = costStatus,
+                    programId = programId,
+                    purchasingAccountId = purchasingAccountId,
+                    supplierId = supplierId,
+                )
+                .getOrThrow()
         }
 
         // THEN
@@ -121,17 +128,19 @@ class ReportRepositoryTest {
         @BeforeEach
         fun setUp() {
             reportId = runBlocking {
-                reportRepository.insert(
-                    name = initialName,
-                    start = initialStart,
-                    end = initialEnd,
-                    itemId = null,
-                    itemCategoryId = null,
-                    costStatus = null,
-                    programId = null,
-                    purchasingAccountId = null,
-                    supplierId = null
-                ).getOrThrow()
+                reportRepository
+                    .insert(
+                        name = initialName,
+                        start = initialStart,
+                        end = initialEnd,
+                        itemId = null,
+                        itemCategoryId = null,
+                        costStatus = null,
+                        programId = null,
+                        purchasingAccountId = null,
+                        supplierId = null,
+                    )
+                    .getOrThrow()
             }
         }
 
@@ -144,18 +153,20 @@ class ReportRepositoryTest {
 
             // WHEN
             val id = runBlocking {
-                reportRepository.update(
-                    id = reportId,
-                    name = updatedName,
-                    start = updatedStart,
-                    end = updatedEnd,
-                    itemId = null,
-                    itemCategoryId = null,
-                    costStatus = CostStatus.PURCHASED,
-                    programId = null,
-                    purchasingAccountId = null,
-                    supplierId = null
-                ).getOrThrow()
+                reportRepository
+                    .update(
+                        id = reportId,
+                        name = updatedName,
+                        start = updatedStart,
+                        end = updatedEnd,
+                        itemId = null,
+                        itemCategoryId = null,
+                        costStatus = CostStatus.PURCHASED,
+                        programId = null,
+                        purchasingAccountId = null,
+                        supplierId = null,
+                    )
+                    .getOrThrow()
             }
 
             // THEN
@@ -200,24 +211,28 @@ class ReportRepositoryTest {
     inner class WithMultipleRecords {
 
         fun getName(index: Int) = "Batch Report $index"
+
         fun getStartDate(index: Int): LocalDate = LocalDate.of(2026, index, 1)
+
         fun getEndDate(index: Int): LocalDate = LocalDate.of(2026, index, 28)
 
         @BeforeEach
         fun setUp() {
             runBlocking {
                 (1..3).forEach { index ->
-                    reportRepository.insert(
-                        name = getName(index),
-                        start = getStartDate(index),
-                        end = getEndDate(index),
-                        itemId = null,
-                        itemCategoryId = null,
-                        costStatus = null,
-                        programId = null,
-                        purchasingAccountId = null,
-                        supplierId = null
-                    ).getOrThrow()
+                    reportRepository
+                        .insert(
+                            name = getName(index),
+                            start = getStartDate(index),
+                            end = getEndDate(index),
+                            itemId = null,
+                            itemCategoryId = null,
+                            costStatus = null,
+                            programId = null,
+                            purchasingAccountId = null,
+                            supplierId = null,
+                        )
+                        .getOrThrow()
                 }
             }
         }

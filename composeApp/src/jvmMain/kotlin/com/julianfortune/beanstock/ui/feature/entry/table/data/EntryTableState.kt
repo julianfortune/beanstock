@@ -9,14 +9,14 @@ data class EntryTableState(
     val totalCost: String,
 ) {
     companion object {
-        fun empty() = EntryTableState(
-            emptyList(),
-            SelectionState.Disabled,
-            null,
-            "0",
-            "0.0",
-            "$0.00"
-        )
-
+        fun empty() =
+            EntryTableState(
+                emptyList(),
+                SelectionState.Disabled,
+                null,
+                "0",
+                "0.0",
+                "$0.00",
+            )
     }
 }

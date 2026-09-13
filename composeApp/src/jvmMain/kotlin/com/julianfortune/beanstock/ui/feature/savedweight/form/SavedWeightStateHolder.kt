@@ -18,10 +18,7 @@ class SavedWeightStateHolder {
         val pounds = poundsInput.toIntOrNull()
         val ounces = ouncesInput.toFloatOrNull()
 
-        if (listOf(pounds, ounces).any { it != null }
-            && (pounds ?: 0) >= 0
-            && (ounces ?: 0f) >= 0f
-        ) {
+        if (listOf(pounds, ounces).any { it != null } && (pounds ?: 0) >= 0 && (ounces ?: 0f) >= 0f) {
             SavedWeightBody(Weight.ofImperial(pounds ?: 0, ounces ?: 0f))
         } else {
             null
@@ -32,7 +29,7 @@ class SavedWeightStateHolder {
         SavedWeightFormState(
             FormFieldState(poundsInput),
             FormFieldState(ouncesInput),
-            isValid = validData != null
+            isValid = validData != null,
         )
     }
 

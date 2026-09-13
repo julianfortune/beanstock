@@ -28,45 +28,44 @@ fun ReportCriteriaSection(
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.Start,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 text = "Criteria",
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 8.dp),
             )
 
             Row {
                 IconButton(
                     modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),
-                    onClick = onClickEdit
+                    onClick = onClickEdit,
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Edit,
-                        contentDescription = "Edit criteria"
+                        contentDescription = "Edit criteria",
                     )
                 }
             }
         }
 
-        KeyValueList(
-            modifier = Modifier.widthIn(max = 360.dp)
-        ) {
+        KeyValueList(modifier = Modifier.widthIn(max = 360.dp)) {
             KeyValueItem(Icons.Outlined.CalendarMonth, "Start", state.startDate)
             KeyValueItem(Icons.Outlined.CalendarMonth, "End", state.endDate)
 
             state.item?.let { KeyValueItem(Icons.Outlined.EggAlt, "Item", it.name) }
             state.category?.let { KeyValueItem(Icons.Outlined.Category, "Category", it.name) }
             state.costStatus?.let {
-                val description = when (it) {
-                    CostStatus.PURCHASED -> "Paid"
-                    CostStatus.NO_COST -> "No cost"
-                }
+                val description =
+                    when (it) {
+                        CostStatus.PURCHASED -> "Paid"
+                        CostStatus.NO_COST -> "No cost"
+                    }
                 KeyValueItem(Icons.Outlined.Money, "Cost Status", description)
             }
             state.program?.let { KeyValueItem(Icons.Outlined.Cases, "Program", it.name) }

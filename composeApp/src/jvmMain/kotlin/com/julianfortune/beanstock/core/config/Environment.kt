@@ -2,8 +2,7 @@ package com.julianfortune.beanstock.core.config
 
 enum class Environment {
     DEVELOPMENT,
-    RELEASE,
-    ;
+    RELEASE;
 
     companion object {
         val nameToEntry = entries.associateBy { it.name }
@@ -12,5 +11,4 @@ enum class Environment {
             return System.getProperty(CustomProperties.ENV)?.let { nameToEntry.getValue(it) } ?: fallback
         }
     }
-
 }

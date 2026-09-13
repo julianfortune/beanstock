@@ -1,6 +1,5 @@
 package com.julianfortune.beanstock.ui.feature.report.detail.ui
 
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -20,7 +19,7 @@ fun EditReportCriteriaForm(
     initialValues: ReportNameBody,
     onCancel: () -> Unit = {},
     onSubmit: (newName: ReportNameBody) -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val stateHolder = remember {
         EditReportNameStateHolder(initialValues)
@@ -44,32 +43,32 @@ fun EditReportCriteriaFormUi(
     onNameChange: (name: String) -> Unit = {},
     onCancel: () -> Unit = {},
     onSubmit: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             text = "Edit Name",
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
 
         OutlinedTextField(
             value = state.name.value,
             onValueChange = onNameChange,
             label = { Text("Name *") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-                .onFocusChanged({ state ->
-                    if (!state.isFocused) {
-                        // Check for error
-                    }
-                }),
+            modifier =
+                Modifier.fillMaxWidth()
+                    .height(64.dp)
+                    .onFocusChanged({ state ->
+                        if (!state.isFocused) {
+                            // Check for error
+                        }
+                    }),
             singleLine = true,
             isError = state.name.isError,
             colors = OutlinedTextFieldDefaults.colors(),
@@ -79,7 +78,7 @@ fun EditReportCriteriaFormUi(
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             TextButton(
                 modifier = Modifier.pointerHoverIcon(PointerIcon.Hand),

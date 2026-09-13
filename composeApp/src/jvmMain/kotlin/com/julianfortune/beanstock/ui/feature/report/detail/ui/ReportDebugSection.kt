@@ -25,33 +25,27 @@ fun ReportDebugSection(
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.Start
+        horizontalAlignment = Alignment.Start,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
                 text = "Details",
                 style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 8.dp),
             )
         }
 
         state.forEach { delivery ->
-            OutlinedCard(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
+            OutlinedCard(modifier = Modifier.fillMaxWidth()) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                        .padding(16.dp)
+                    modifier =
+                        Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainerLow).padding(16.dp)
                 ) {
-                    Text(
-                        "${delivery.supplier.name} • ${delivery.received}"
-                    )
+                    Text("${delivery.supplier.name} • ${delivery.received}")
                 }
 
                 delivery.entries.forEach { entry ->
@@ -67,35 +61,49 @@ fun ReportDebugSection(
                     }
                 }
 
-                delivery.taxesCents?.takeIf { it > 0 }?.let { taxesCents ->
-                    HorizontalDivider(Modifier.height(1.dp))
+                delivery.taxesCents
+                    ?.takeIf { it > 0 }
+                    ?.let { taxesCents ->
+                        HorizontalDivider(Modifier.height(1.dp))
 
-                    EntryRow(modifier = Modifier.padding(top = 16.dp, end = 16.dp, bottom = 16.dp)) {
-                        ItemNameCell { Text(
-                            "Taxes",
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-                        ) }
-                        EntryCostCell { Text(
-                            "$" + formatCents(taxesCents), fontFamily = FontFamily.Monospace,
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-                        ) }
+                        EntryRow(modifier = Modifier.padding(top = 16.dp, end = 16.dp, bottom = 16.dp)) {
+                            ItemNameCell {
+                                Text(
+                                    "Taxes",
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                                )
+                            }
+                            EntryCostCell {
+                                Text(
+                                    "$" + formatCents(taxesCents),
+                                    fontFamily = FontFamily.Monospace,
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                                )
+                            }
+                        }
                     }
-                }
 
-                delivery.feesCents?.takeIf { it > 0 }?.let { feesCents ->
-                    HorizontalDivider(Modifier.height(1.dp))
+                delivery.feesCents
+                    ?.takeIf { it > 0 }
+                    ?.let { feesCents ->
+                        HorizontalDivider(Modifier.height(1.dp))
 
-                    EntryRow(modifier = Modifier.padding(top = 16.dp, end = 16.dp, bottom = 16.dp)) {
-                        ItemNameCell { Text(
-                            "Fees",
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-                        ) }
-                        EntryCostCell { Text(
-                            "$" + formatCents(feesCents), fontFamily = FontFamily.Monospace,
-                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
-                        ) }
+                        EntryRow(modifier = Modifier.padding(top = 16.dp, end = 16.dp, bottom = 16.dp)) {
+                            ItemNameCell {
+                                Text(
+                                    "Fees",
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                                )
+                            }
+                            EntryCostCell {
+                                Text(
+                                    "$" + formatCents(feesCents),
+                                    fontFamily = FontFamily.Monospace,
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                                )
+                            }
+                        }
                     }
-                }
             }
 
             Spacer(Modifier.height(16.dp))

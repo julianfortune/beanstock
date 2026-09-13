@@ -40,9 +40,10 @@ fun CompactOutlinedTextField(
 
     // Trigger callbacks when internal state is updated
     LaunchedEffect(state) {
-        snapshotFlow { state.text }.collect { newText ->
-            onValueChange(newText.toString())
-        }
+        snapshotFlow { state.text }
+            .collect { newText ->
+                onValueChange(newText.toString())
+            }
     }
 
     OutlinedTextField(
@@ -52,26 +53,30 @@ fun CompactOutlinedTextField(
         shape = shape,
         lineLimits = TextFieldLineLimits.SingleLine,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-        suffix = units?.let { { Text(it) } }
+        suffix = units?.let { { Text(it) } },
     )
 }
 
 @Preview
 @Composable
 fun CompactOutlinedTextFieldPreview() = AppPreview {
-    Row { CompactOutlinedTextField(
-        "90.0",
-        {},
-        units = "lbs"
-    ) }
+    Row {
+        CompactOutlinedTextField(
+            "90.0",
+            {},
+            units = "lbs",
+        )
+    }
 }
 
 @Preview
 @Composable
 fun CompactOutlinedTextFieldErrorPreview() = AppPreview {
-    Row { CompactOutlinedTextField(
-        "Test",
-        {},
-        isError = true,
-    ) }
+    Row {
+        CompactOutlinedTextField(
+            "Test",
+            {},
+            isError = true,
+        )
+    }
 }

@@ -18,7 +18,6 @@ import com.julianfortune.beanstock.ui.page.namedentity.data.EntityOperation
 import com.julianfortune.beanstock.ui.page.namedentity.ui.UpdateNamedEntityForm
 import kotlinx.coroutines.launch
 
-
 // TODO: Proactively check if entity is referenced by > 1 other entities and can't be deleted
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -26,7 +25,7 @@ import kotlinx.coroutines.launch
 fun <T : NamedEntity> NamedEntityPage(
     viewModel: NamedEntityPageViewModel<T>,
     title: String,
-    entityName: String
+    entityName: String,
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -40,18 +39,19 @@ fun <T : NamedEntity> NamedEntityPage(
             null,
             onClickCreateNew = {
                 viewModel.showCreateNew()
-            }
+            },
         ) { entity, modifier, elevation ->
             ListItem(
                 headlineContent = {
                     Text(entity.name)
                 },
-                modifier = modifier.clickable(
-                    enabled = true,
-                    onClick = {
-                        viewModel.showEdit(entity)
-                    }
-                ),
+                modifier =
+                    modifier.clickable(
+                        enabled = true,
+                        onClick = {
+                            viewModel.showEdit(entity)
+                        },
+                    ),
                 tonalElevation = elevation,
                 trailingContent = {
                     EntityOptionsDropdownMenu(
@@ -62,7 +62,7 @@ fun <T : NamedEntity> NamedEntityPage(
                             viewModel.showDelete(entity)
                         },
                     )
-                }
+                },
             )
         }
     }
@@ -114,7 +114,7 @@ fun <T : NamedEntity> NamedEntityPage(
                                 viewModel.delete(id)
                                 viewModel.dismissOperation()
                             }
-                        }
+                        },
                     )
                 }
 

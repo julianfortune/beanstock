@@ -9,13 +9,14 @@ data class ReportResult(
     val totalCostCents: Long,
 ) {
     companion object {
-        fun ofZeroes() = ReportResult(
-            0,
-            0,
-            0,
-            0,
-            Weight(0),
-            0,
-        )
+        fun ofZeroes() =
+            ReportResult(
+                0,
+                0,
+                0,
+                0,
+                Weight(0),
+                0,
+            )
     }
 }
