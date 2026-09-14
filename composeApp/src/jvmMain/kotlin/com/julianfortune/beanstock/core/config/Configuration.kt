@@ -1,7 +1,7 @@
 package com.julianfortune.beanstock.core.config
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.julianfortune.beanstock.core.system.Resources
+import tools.jackson.databind.ObjectMapper
 
 data class Configuration(
     val windowTitle: String,
