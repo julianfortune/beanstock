@@ -1,7 +1,7 @@
 package com.julianfortune.beanstock.core.system
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.module.kotlin.readValue
 
 object Resources {
     inline fun <reified T> load(mapper: ObjectMapper, fileName: String): T {
