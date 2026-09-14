@@ -32,8 +32,6 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
 }
 
 kotlin {
-    jvmToolchain(20)
-
     jvm {
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
