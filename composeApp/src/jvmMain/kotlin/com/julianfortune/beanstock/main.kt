@@ -9,12 +9,10 @@ import androidx.compose.ui.window.v2.Window
 import androidx.compose.ui.window.v2.WindowBoundsProvider
 import androidx.compose.ui.window.v2.WindowSizeProvider
 import androidx.compose.ui.window.v2.rememberWindowState
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.julianfortune.beanstock.core.config.Configuration
 import com.julianfortune.beanstock.core.config.Environment
 import com.julianfortune.beanstock.core.config.FileLocation
+import com.julianfortune.beanstock.core.extension.jacksonYamlMapper
 import com.julianfortune.beanstock.core.system.AppDataManager
 import com.julianfortune.beanstock.core.system.Platform
 import com.julianfortune.beanstock.db.DatabaseDriverFactory
@@ -28,10 +26,10 @@ fun main() {
     // Makes app bar match system theme on macOS
     System.setProperty("apple.awt.application.appearance", "system")
 
-    val mapper = ObjectMapper(YAMLFactory()).registerKotlinModule()
+    val yamlMapper = jacksonYamlMapper()
 
     val environment = Environment.fromSystem(Environment.RELEASE)
-    val configuration = Configuration.load(mapper, environment)
+    val configuration = Configuration.load(yamlMapper, environment)
 
     val adm = AppDataManager(Platform.current)
 
@@ -41,6 +39,7 @@ fun main() {
                 adm.initialize()
                 adm.appDataPath
             }
+
             FileLocation.WORKING_DIRECTORY -> Paths.get("")
         }
 
